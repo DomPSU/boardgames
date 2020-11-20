@@ -1,0 +1,33 @@
+{
+  "name": "boardgames",
+  "version": "1.0.0",
+  "description": "cs 493 (Cloud Application Development) portfolio assignment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon index.js",
+    "start": "node index.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DomPSU/boardgames.git"
+  },
+  "author": "Dominic Lupo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DomPSU/boardgames/issues"
+  },
+  "homepage": "https://github.com/DomPSU/boardgames#readme",
+  "dependencies": {
+    "@google-cloud/datastore": "^6.3.0",
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.5.3",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "express-session": "^1.17.1",
+    "google-auth-library": "^6.1.3",
+    "google-gax": "^2.9.2",
+    "nodemon": "^2.0.6"
+  }
+}

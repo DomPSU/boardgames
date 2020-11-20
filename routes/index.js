@@ -16,7 +16,6 @@ router.get("/login", function (req, res) {
 });
 
 router.get("/profile", function (req, res) {
-  res.status(200);
   res.render("profile");
 });
 

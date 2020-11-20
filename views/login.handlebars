@@ -1,3 +1,24 @@
-<div>
- Login 
+<div class="container bg-info p-5">
+  <div id="loginButton"></div>
 </div>
+
+<script src="https://apis.google.com/js/platform.js" async defer id="gapiScript"></script>
+<script>
+  document
+    .getElementById('gapiScript')
+    .addEventListener('load', renderSignIn);
+  // call renderSignIn if gapi is already loaded to avoid race condition
+  if (window.gapiLoaded === true) {
+    renderSignIn();
+  }
+  function renderSignIn() {
+    window.gapi.load('signin2', () => {
+      const params = {
+        onsuccess: (googleUser) => {
+          window.location.replace("/profile")
+        },
+      };
+      window.gapi.signin2.render('loginButton', params);
+    });
+  }
+</script>

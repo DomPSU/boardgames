@@ -20,7 +20,7 @@ const getURL = () => {
     return "http://localhost:3000/";
   }
 
-  return "https://lupod-cs493-hw5.uk.r.appspot.com/"; // TODO add actual url
+  return "https://lupod-portfolio.wl.r.appspot.com/";
 };
 
 const PORT = process.env.PORT || 3000;

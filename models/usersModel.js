@@ -37,11 +37,17 @@ const getUsers = async (cursor, queryKeys, queryValues) => {
 const create = async (sub) => {
   let key = datastore.key(util.USER);
 
-  const newUser = { sub: sub };
+  const newUser = { sub: sub, boardgames: [] };
 
   return datastore.save({ key: key, data: newUser }).then(() => {
     return { key, newUser };
   });
+};
+
+const destroy = async (id) => {
+  const key = datastore.key([util.USER, parseInt(id, 10)]);
+
+  return datastore.delete(key);
 };
 
 module.exports = {
@@ -49,4 +55,5 @@ module.exports = {
   getUserFromSub,
   getUsers,
   create,
+  destroy,
 };

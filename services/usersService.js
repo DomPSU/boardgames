@@ -5,32 +5,33 @@ const util = require("../util");
 const index = async (req, res, next) => {};
 
 const create = async (req, res, next) => {
-  console.log("Creating a user");
+  const idToken = req.headers.authorization;
 
-  let idToken = req.headers.authorization;
+  const ticket = await google.verify(idToken);
+  if (!ticket) {
+    res.status(403).end();
+    return;
+  }
 
-  console.log(req.headers);
+  const sub = await google.getUserSub(ticket);
 
-  // get validated user from idToken
-  const verify = async () => {
-    const ticket = await google.verify(idToken);
-    const insertCredentials = await google.getUserSub(ticket);
+  let user;
+  try {
+    user = await usersModel.getUserFromSub(sub);
+  } catch (e) {
+    // TODO 500 error
+    return;
+  }
 
-    console.log("INSERT CREDENTIALS");
-    console.log(insertCredentials);
-
-    // insert new validated user
+  if (user.length === 0) {
     try {
-      // TODO insert user
+      user = await usersModel.create(sub);
     } catch (e) {
-      console.log("error");
-      next(e);
+      // TODO 500 error
     }
-  };
-  verify().catch(console.error);
+  }
 
-  console.log("return 200");
-  res.status(200).end();
+  res.status(200).json({ sub: user[0].sub });
 };
 
 module.exports = {

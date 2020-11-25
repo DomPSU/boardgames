@@ -1,11 +1,10 @@
 <div class="container p-5">
   <div id="loginButton"></div>
-  <div id="error" class="text-danger"></div>
   <h1>
-    JWT: <div id="idToken" class="text-success">Please sign in or wait till user loads.<div>
+    JWT: <div id="idToken" class="text-info">Please sign in.<div>
   </h1>
   <h1>
-    DB ID: <div id="sub" class="text-success">Please sign in or wait till user loads</div>
+    DB ID (same as sub): <div id="sub" class="text-info">Please wait for server response.</div>
   </h1>
 </div>
 
@@ -27,8 +26,7 @@
 
   const postUser = async (googleUser) => {
     const userAuth = await googleUser.reloadAuthResponse();
-
-    console.log(userAuth.id_token);
+    document.getElementById("idToken").innerHTML = userAuth.id_token;
 
     const response = await fetch("http://localhost:3000/users", { // TODO dynamic url
       method: 'POST',
@@ -38,7 +36,10 @@
     });
 
     if (response.status !== 200) {
-      document.getElementById("error").innerHTML = "An error occured. Please refresh.";
+      document.getElementById("sub").innerHTML = "An error occured. Please refresh.";
+    } else {
+      const { sub } = await response.json();
+      document.getElementById("sub").innerHTML = sub;
     }
   }
 

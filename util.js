@@ -27,6 +27,7 @@ const PORT = process.env.PORT || 3000;
 const USER = "User";
 const BOARDGAME = "Boardgame";
 const PLAY = "Play";
+const PAGINATION_LIMIT = 5;
 
 module.exports = {
   validKeys,
@@ -35,4 +36,5 @@ module.exports = {
   USER,
   BOARDGAME,
   PLAY,
+  PAGINATION_LIMIT,
 };

@@ -31,7 +31,7 @@ const getUsers = async (cursor, queryKeys, queryValues) => {
   const { moreResults, endCursor } = entities[1];
   const isMoreResults = isMoreResultsFn(moreResults);
 
-  return { boats: entities[0].map(fromDatastore), isMoreResults, endCursor };
+  return { users: entities[0].map(fromDatastore), isMoreResults, endCursor };
 };
 
 const create = async (sub) => {

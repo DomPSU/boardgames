@@ -1,8 +1,33 @@
 const usersModel = require("../models/usersModel");
 const google = require("../config/google");
-const util = require("../util");
+const { getUrl, removeCursorFromQueryString } = require("../util");
 
-const index = async (req, res, next) => {};
+const index = async (req, res, next) => {
+  let queryKeys = Object.keys(req.query);
+  let queryValues = Object.values(req.query);
+
+  const cursor = queryKeys.includes("cursor") ? req.query.cursor : null;
+  removeCursorFromQueryString(queryKeys, queryValues);
+
+  try {
+    const dbRes = await usersModel.getUsers(cursor, queryKeys, queryValues);
+
+    let { users, isMoreResults, endCursor } = dbRes;
+
+    if (isMoreResults === true) {
+      let nextURL = `${getURL()}users/?cursor=${endCursor}`;
+
+      res.status(200).json({ users: users, next: nextURL });
+    } else {
+      res.status(200).json({ users: users });
+    }
+  } catch (e) {
+    // TODO 5000 error
+    console.log(e);
+
+    next(e);
+  }
+};
 
 const create = async (req, res, next) => {
   const idToken = req.headers.authorization;

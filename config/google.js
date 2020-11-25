@@ -11,6 +11,13 @@ async function verify(token) {
 }
 verify().catch(console.error);
 
+async function getUserSub(ticket) {
+  const payload = ticket.getPayload();
+
+  return payload.sub;
+}
+
 module.exports = {
   verify,
+  getUserSub,
 };

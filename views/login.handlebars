@@ -1,24 +1,54 @@
-<div class="container bg-info p-5">
+<div class="container p-5">
   <div id="loginButton"></div>
+  <div id="error" class="text-danger"></div>
+  <h1>
+    JWT: <div id="idToken" class="text-success">Please sign in or wait till user loads.<div>
+  </h1>
+  <h1>
+    DB ID: <div id="sub" class="text-success">Please sign in or wait till user loads</div>
+  </h1>
 </div>
 
 <script src="https://apis.google.com/js/platform.js" async defer id="gapiScript"></script>
 <script>
+  const renderSignIn = () => {
+    window.gapi.load('signin2', () => {
+      const params = {
+        onsuccess: (googleUser) => {
+          const userAuth = googleUser.reloadAuthResponse();
+
+          postUser(googleUser);
+        },
+      };
+
+      window.gapi.signin2.render('loginButton', params);
+    });
+  }
+
+  const postUser = async (googleUser) => {
+    const userAuth = await googleUser.reloadAuthResponse();
+
+    console.log(userAuth.id_token);
+
+    const response = await fetch("http://localhost:3000/users", { // TODO dynamic url
+      method: 'POST',
+      headers: {
+        "Authorization": userAuth.id_token
+      }
+    });
+
+    if (response.status !== 200) {
+      document.getElementById("error").innerHTML = "An error occured. Please refresh.";
+    }
+  }
+
   document
     .getElementById('gapiScript')
     .addEventListener('load', renderSignIn);
+
   // call renderSignIn if gapi is already loaded to avoid race condition
   if (window.gapiLoaded === true) {
     renderSignIn();
   }
-  function renderSignIn() {
-    window.gapi.load('signin2', () => {
-      const params = {
-        onsuccess: (googleUser) => {
-          window.location.replace("/profile")
-        },
-      };
-      window.gapi.signin2.render('loginButton', params);
-    });
-  }
+
 </script>

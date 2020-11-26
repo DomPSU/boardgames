@@ -2,7 +2,6 @@ const boardgamesModel = require("../models/boardgamesModel");
 const usersModel = require("../models/usersModel");
 const { getURL, removeCursorFromQueryString } = require("../util");
 const createError = require("http-errors");
-const { query } = require("express");
 
 const show = async (req, res, next) => {
   if (res.locals.userID === undefined) {
@@ -49,7 +48,7 @@ const index = async (req, res, next) => {
   let queryKeys = Object.keys(req.query);
   let queryValues = Object.values(req.query);
 
-  queryKeys.push('user.id');
+  queryKeys.push("user.id");
   queryValues.push(res.locals.userID);
 
   const cursor = queryKeys.includes("cursor") ? req.query.cursor : null;
@@ -134,7 +133,22 @@ const create = async (req, res, next) => {
     return next(createError(400, "Min players must be less than max players"));
   }
 
-  // TODO verify uniq user + name combo
+  queryKeys = ["user.id", "name"];
+  queryValues = [res.locals.userID, req.body.name];
+  const cursor = null;
+
+  let dbRes;
+  try {
+    dbRes = await boardgamesModel.getBoardgames(cursor, queryKeys, queryValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  if (dbRes.boardgames.length !== 0) {
+    return next(
+      createError(400, "User and boardgame name combination must be unique.")
+    );
+  }
 
   let boardgame;
   try {

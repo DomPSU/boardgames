@@ -8,17 +8,13 @@ const show = async (req, res, next) => {
   try {
     user = await usersModel.getUserFromID(req.params.id);
   } catch (err) {
-    return next(err);
-  }
-
-  if (user[0] === undefined) {
     return next(createError(404, "No user with this user_id exists"));
   }
 
   res.status(200).json({
-    id: req.params.id,
-    usb: user[0].sub,
-    self: `${getURL()}users/${req.params.id}`,
+    id: user.id,
+    sub: user.sub,
+    self: `${getURL()}users/${user.id}`,
   });
 };
 
@@ -36,7 +32,8 @@ const index = async (req, res, next) => {
     return next(err);
   }
 
-  let { users, isMoreResults, endCursor } = dbRes;
+  const { isMoreResults, endCursor } = dbRes;
+  let { users } = dbRes;
 
   users.forEach((user) => {
     user.self = `${getURL()}users/${user.id}`;
@@ -57,12 +54,14 @@ const create = async (req, res, next) => {
     return next(createError(401, "Unauthorized"));
   }
 
-  const ticket = await google.verify(idToken);
-  if (!ticket) {
+  let ticket;
+  try {
+    ticket = await google.verify(idToken);
+  } catch (err) {
     return next(createError(403, "Forbidden"));
   }
 
-  const sub = await google.getUserSub(ticket);
+  const sub = google.getUserSub(ticket);
 
   let user;
   try {
@@ -71,7 +70,7 @@ const create = async (req, res, next) => {
     return next(err);
   }
 
-  if (user.length === 0) {
+  if (user === undefined) {
     try {
       user = await usersModel.create(sub);
     } catch (err) {
@@ -79,7 +78,7 @@ const create = async (req, res, next) => {
     }
   }
 
-  res.status(200).json({ sub: user[0].sub });
+  res.status(200).json({ id: user.id });
 };
 
 const destroy = async (req, res, next) => {
@@ -96,7 +95,7 @@ const destroy = async (req, res, next) => {
     return next(err);
   }
 
-  if (dbRes[0].indexUpdates === 0) {
+  if (dbRes.indexUpdates === 0) {
     return next(createError(404, "No user with this user_id exists"));
   }
 

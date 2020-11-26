@@ -1,56 +1,34 @@
 const google = require("../config/google");
+const createError = require("http-errors");
+const userModel = require("../models/usersModel");
 
 const isAuth = async (req, res, next) => {
-  console.log("is auth");
-
   let idToken = req.headers.authorization;
 
   if (idToken === undefined) {
-    // send 401 unauthorized status if user is not logged in
-    console.log("401 unauthorized.");
-    res.status(401).end();
-    return;
+    return next(
+      createError(401, "Unauthorized. Please send jwt in Authorization header")
+    );
   }
 
-  idToken = idToken.substring(7); // strip off "Bearer "
+  idToken = idToken.substring(7); // strip off "Bearer " from jwt
+  let sub;
 
-  // get validated user from id token
   try {
     const ticket = await google.verify(idToken);
-    res.locals.sub = ticket.getPayload().sub;
-    next();
-  } catch (e) {
-    // send 401 unauthorized status if user is not logged in
-    console.log("401 unauthorized.");
-    res.status(401).end();
+    sub = ticket.getPayload().sub;
+  } catch (err) {
+    return next(createError(401, "Unauthorized. Please send valid jwt"));
   }
-};
-
-// set Auth based on jwt
-const setAuth = async (req, res, next) => {
-  console.log("set Auth");
-
-  let idToken = req.headers.authorization;
-  if (idToken === undefined) {
-    res.locals.sub = null;
-    return next();
-  }
-
-  idToken = idToken.substring(7); // strip off "Bearer "
 
   try {
-    // set user to sub from jwt
-    const ticket = await google.verify(idToken);
-    res.locals.sub = ticket.getPayload().sub;
-    return next();
-  } catch (e) {
-    // set user to null
-    res.locals.sub = null;
-    return next();
+    const user = await userModel.getUserFromSub(sub);
+    res.locals.userID = user.id;
+  } catch (err) {
+    return next(err);
   }
 };
 
 module.exports = {
   isAuth,
-  setAuth,
 };

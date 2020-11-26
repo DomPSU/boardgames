@@ -1,9 +1,9 @@
 const { Datastore } = require("@google-cloud/datastore");
 const datastore = new Datastore();
 
-const fromDatastore = (item) => {
-  item.id = item[Datastore.KEY].id;
-  return item;
+const addID = (entity) => {
+  entity.id = entity[Datastore.KEY].id;
+  return entity;
 };
 
 const isMoreResultsFn = (moreResults) => {
@@ -12,6 +12,6 @@ const isMoreResultsFn = (moreResults) => {
 
 module.exports = {
   datastore,
-  fromDatastore,
+  addID,
   isMoreResultsFn,
 };

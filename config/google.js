@@ -8,13 +8,14 @@ async function verify(token) {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     return ticket;
-  } catch (e) {
-    return false; 
+  } catch (err) {
+    throw new Error();
   }
 }
 
-async function getUserSub(ticket) {
+function getUserSub(ticket) {
   const payload = ticket.getPayload();
 
   return payload.sub;

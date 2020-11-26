@@ -1,23 +1,27 @@
-const { datastore, fromDatastore, isMoreResultsFn } = require("./db");
-const util = require("../util");
+const { datastore, addID, isMoreResultsFn } = require("./db");
+const { PAGINATION_LIMIT, USER } = require("../util");
 
 const getUserFromID = async (id) => {
-  const key = datastore.key([util.USER, parseInt(id, 10)]);
+  const key = datastore.key([USER, parseInt(id, 10)]);
 
-  return datastore.get(key);
+  let entity = await datastore.get(key);
+  const user = entity.map(addID)[0];
+
+  return user;
 };
 
 const getUserFromSub = async (sub) => {
-  let q = datastore.createQuery(util.USER);
-
+  let q = datastore.createQuery(USER);
   q.filter("sub", "=", sub);
 
-  const entities = await datastore.runQuery(q);
-  return entities[0];
+  let entities = await datastore.runQuery(q);
+  const user = entities[0].map(addID)[0];
+
+  return user;
 };
 
 const getUsers = async (cursor, queryKeys, queryValues) => {
-  let q = datastore.createQuery(util.USER).limit(util.PAGINATION_LIMIT);
+  let q = datastore.createQuery(USER).limit(PAGINATION_LIMIT);
 
   for (let i = 0; i < queryKeys.length; i += 1) {
     q.filter(queryKeys[i], "=", queryValues[i]);
@@ -31,23 +35,25 @@ const getUsers = async (cursor, queryKeys, queryValues) => {
   const { moreResults, endCursor } = entities[1];
   const isMoreResults = isMoreResultsFn(moreResults);
 
-  return { users: entities[0].map(fromDatastore), isMoreResults, endCursor };
+  return { users: entities[0].map(addID), isMoreResults, endCursor };
 };
 
 const create = async (sub) => {
-  let key = datastore.key(util.USER);
+  let key = datastore.key(USER);
 
   const newUser = { sub: sub, boardgames: [] };
+  await datastore.save({ key: key, data: newUser });
 
-  return datastore.save({ key: key, data: newUser }).then(() => {
-    return { key, newUser };
-  });
+  let entity = await datastore.get(key);
+  user = entity.map(addID)[0];
+
+  return user;
 };
 
 const destroy = async (id) => {
-  const key = datastore.key([util.USER, parseInt(id, 10)]);
-
-  return datastore.delete(key);
+  const key = datastore.key([USER, parseInt(id, 10)]);
+  const dbRes = await datastore.delete(key);
+  return dbRes[0];
 };
 
 module.exports = {

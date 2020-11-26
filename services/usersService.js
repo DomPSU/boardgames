@@ -1,27 +1,25 @@
 const usersModel = require("../models/usersModel");
 const google = require("../config/google");
 const { getURL, removeCursorFromQueryString } = require("../util");
+const createError = require("http-errors");
 
 const show = async (req, res, next) => {
+  let user;
   try {
-    const user = await usersModel.getUserFromID(req.params.id);
-
-    if (user[0] === undefined) {
-      throw new Error();
-    }
-
-    res.status(200).json({
-      id: req.params.id,
-      usb: user[0].sub,
-      self: `${getURL()}users/${req.params.id}`,
-    });
-  } catch (e) {
-    console.log(e);
-
-    res.status(404).json({ Error: "No user with this user_id exists" });
-
-    return;
+    user = await usersModel.getUserFromID(req.params.id);
+  } catch (err) {
+    return next(err);
   }
+
+  if (user[0] === undefined) {
+    return next(createError(404, "No user with this user_id exists"));
+  }
+
+  res.status(200).json({
+    id: req.params.id,
+    usb: user[0].sub,
+    self: `${getURL()}users/${req.params.id}`,
+  });
 };
 
 const index = async (req, res, next) => {
@@ -31,37 +29,37 @@ const index = async (req, res, next) => {
   const cursor = queryKeys.includes("cursor") ? req.query.cursor : null;
   removeCursorFromQueryString(queryKeys, queryValues);
 
+  let dbRes;
   try {
-    const dbRes = await usersModel.getUsers(cursor, queryKeys, queryValues);
+    dbRes = await usersModel.getUsers(cursor, queryKeys, queryValues);
+  } catch (err) {
+    return next(err);
+  }
 
-    let { users, isMoreResults, endCursor } = dbRes;
+  let { users, isMoreResults, endCursor } = dbRes;
 
-    users.forEach((user) => {
-      user.self = `${getURL()}users/${user.id}`;
-    });
+  users.forEach((user) => {
+    user.self = `${getURL()}users/${user.id}`;
+  });
 
-    if (isMoreResults === true) {
-      let nextURL = `${getURL()}users/?cursor=${endCursor}`;
-
-      res.status(200).json({ users: users, next: nextURL });
-    } else {
-      res.status(200).json({ users: users });
-    }
-  } catch (e) {
-    // TODO 5000 error
-    console.log(e);
-
-    next(e);
+  if (isMoreResults === true) {
+    let nextURL = `${getURL()}users/?cursor=${endCursor}`;
+    res.status(200).json({ users: users, next: nextURL });
+  } else {
+    res.status(200).json({ users: users });
   }
 };
 
 const create = async (req, res, next) => {
   const idToken = req.headers.authorization;
 
+  if (!idToken) {
+    return next(createError(401, "Unauthorized"));
+  }
+
   const ticket = await google.verify(idToken);
   if (!ticket) {
-    res.status(403).end();
-    return;
+    return next(createError(403, "Forbidden"));
   }
 
   const sub = await google.getUserSub(ticket);
@@ -69,20 +67,17 @@ const create = async (req, res, next) => {
   let user;
   try {
     user = await usersModel.getUserFromSub(sub);
-  } catch (e) {
-    // TODO 500 error
-    return;
+  } catch (err) {
+    return next(err);
   }
 
   if (user.length === 0) {
     try {
       user = await usersModel.create(sub);
-    } catch (e) {
-      // TODO 500 error
+    } catch (err) {
+      return next(err);
     }
   }
-
-  // TODO add self link to users
 
   res.status(200).json({ sub: user[0].sub });
 };
@@ -94,21 +89,18 @@ const destroy = async (req, res, next) => {
 
   // TODO destroy board games for this user
 
+  let dbRes;
   try {
-    const dbRes = await usersModel.destroy(req.params.id);
-
-    if (dbRes[0].indexUpdates === 0) {
-      throw new Error();
-    }
-
-    res.status(204).end();
-    return;
-  } catch (e) {
-    console.log(e);
-
-    res.status(404).json({ Error: "No user with this user_id exists" });
-    return;
+    dbRes = await usersModel.destroy(req.params.id);
+  } catch (err) {
+    return next(err);
   }
+
+  if (dbRes[0].indexUpdates === 0) {
+    return next(createError(404, "No user with this user_id exists"));
+  }
+
+  res.status(204).end();
 };
 
 module.exports = {

@@ -4,8 +4,8 @@ const boardgamesRouter = express.Router();
 const { isAuth } = require("../middlewares/auth");
 
 // get
-boardgamesRouter.get("/:id", boardgamesService.show);
-boardgamesRouter.get("/", boardgamesService.index);
+boardgamesRouter.get("/:id", isAuth, boardgamesService.show);
+boardgamesRouter.get("/", isAuth, boardgamesService.index);
 
 // post
 boardgamesRouter.post("/", isAuth, boardgamesService.create);

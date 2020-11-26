@@ -2,11 +2,14 @@ const boardgamesModel = require("../models/boardgamesModel");
 const usersModel = require("../models/usersModel");
 const { getURL, removeCursorFromQueryString } = require("../util");
 const createError = require("http-errors");
+const { query } = require("express");
 
 const show = async (req, res, next) => {
-  // TODO add check for middleware?
-
-  // TODO check if board game and user are both the same
+  if (res.locals.userID === undefined) {
+    return next(
+      createError(401, "Unauthorized. Authorization middleware is required.")
+    );
+  }
 
   let boardgame;
   try {
@@ -16,7 +19,14 @@ const show = async (req, res, next) => {
   }
 
   const { id, name, min_players, max_players, plays } = boardgame;
-  const resUser = boardgame.user;
+
+  console.log("meow");
+
+  if (res.locals.userID !== boardgame.user.id) {
+    return next(
+      createError(403, "Forbidden. Can only view your own boardgames")
+    );
+  }
 
   res.status(200).json({
     id: id,
@@ -24,18 +34,23 @@ const show = async (req, res, next) => {
     min_players: min_players,
     max_players: max_players,
     plays: plays,
-    user: resUser,
+    user: boardgame.user,
     self: `${getURL()}boardgames/${id}`,
   });
 };
 
 const index = async (req, res, next) => {
-  // TODO add check for middleware?
-
-  // TODO check if board game and user are both the same
+  if (res.locals.userID === undefined) {
+    return next(
+      createError(401, "Unauthorized. Authorization middleware is required.")
+    );
+  }
 
   let queryKeys = Object.keys(req.query);
   let queryValues = Object.values(req.query);
+
+  queryKeys.push('user.id');
+  queryValues.push(res.locals.userID);
 
   const cursor = queryKeys.includes("cursor") ? req.query.cursor : null;
   removeCursorFromQueryString(queryKeys, queryValues);

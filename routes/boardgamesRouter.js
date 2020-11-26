@@ -11,6 +11,6 @@ boardgamesRouter.get("/", isAuth, boardgamesService.index);
 boardgamesRouter.post("/", isAuth, boardgamesService.create);
 
 // delete
-boardgamesRouter.delete("/:id", boardgamesService.destroy);
+boardgamesRouter.delete("/:id", isAuth, boardgamesService.destroy);
 
 module.exports = boardgamesRouter;

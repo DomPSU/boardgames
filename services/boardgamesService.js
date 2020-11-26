@@ -172,31 +172,36 @@ const create = async (req, res, next) => {
 };
 
 const destroy = async (req, res, next) => {
-  // TODO add check for middleware?
+  if (res.locals.userID === undefined) {
+    return next(
+      createError(401, "Unauthorized. Authorization middleware is required.")
+    );
+  }
 
-  // TODO check if board game and user are both the same
+  let boardgame;
+  try {
+    boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+  } catch (err) {
+    return next(createError(404, "No boardgame with this id exists"));
+  }
 
-  // TODO check if boardgame exists
-
-  // check board game user
+  if (res.locals.userID !== boardgame.user.id) {
+    return next(
+      createError(403, "Forbidden. Can only delete your own boardgames")
+    );
+  }
 
   // update user by remove boardgame from user boardgames
 
   // check if board game has plays
 
-  // delete plays
-
-  // TODO destroy board games for this user
+  // delete all plays
 
   let dbRes;
   try {
     dbRes = await boardgamesModel.destroy(req.params.id);
   } catch (err) {
     return next(err);
-  }
-
-  if (dbRes.indexUpdates === 0) {
-    return next(createError(404, "No boardgame with this id exists"));
   }
 
   res.status(204).end();

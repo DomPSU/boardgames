@@ -24,6 +24,7 @@ const isAuth = async (req, res, next) => {
   try {
     const user = await userModel.getUserFromSub(sub);
     res.locals.userID = user.id;
+    next();
   } catch (err) {
     return next(err);
   }

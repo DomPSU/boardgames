@@ -7,7 +7,7 @@ const isAuth = async (req, res, next) => {
 
   if (idToken === undefined) {
     return next(
-      createError(401, "Unauthorized. Please send jwt in Authorization header")
+      createError(401, "Unauthorized. Please send jwt in Authorization header.")
     );
   }
 
@@ -18,7 +18,7 @@ const isAuth = async (req, res, next) => {
     const ticket = await google.verify(idToken);
     sub = ticket.getPayload().sub;
   } catch (err) {
-    return next(createError(401, "Unauthorized. Please send valid jwt"));
+    return next(createError(401, "Unauthorized. Please send valid jwt."));
   }
 
   try {

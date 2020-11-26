@@ -14,16 +14,14 @@ const show = async (req, res, next) => {
   try {
     boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
   } catch (err) {
-    return next(createError(404, "No boardgame with this id exists"));
+    return next(createError(404, "No boardgame with this id exists."));
   }
 
   const { id, name, min_players, max_players, plays } = boardgame;
 
-  console.log("meow");
-
   if (res.locals.userID !== boardgame.user.id) {
     return next(
-      createError(403, "Forbidden. Can only view your own boardgames")
+      createError(403, "Forbidden. Can only view your own boardgames.")
     );
   }
 
@@ -93,7 +91,7 @@ const create = async (req, res, next) => {
 
   if (user === undefined) {
     return next(
-      createError(500, "Valid credentials but user is not stored in database")
+      createError(500, "Valid credentials but user is not stored in database.")
     );
   }
 
@@ -130,7 +128,7 @@ const create = async (req, res, next) => {
       req.body.maxPlayers
     )
   ) {
-    return next(createError(400, "Min players must be less than max players"));
+    return next(createError(400, "Min players must be less than max players."));
   }
 
   queryKeys = ["user.id", "name"];
@@ -182,12 +180,12 @@ const destroy = async (req, res, next) => {
   try {
     boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
   } catch (err) {
-    return next(createError(404, "No boardgame with this id exists"));
+    return next(createError(404, "No boardgame with this id exists."));
   }
 
   if (res.locals.userID !== boardgame.user.id) {
     return next(
-      createError(403, "Forbidden. Can only delete your own boardgames")
+      createError(403, "Forbidden. Can only delete your own boardgames.")
     );
   }
 

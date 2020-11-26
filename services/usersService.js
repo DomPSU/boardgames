@@ -8,7 +8,7 @@ const show = async (req, res, next) => {
   try {
     user = await usersModel.getUserFromID(req.params.id);
   } catch (err) {
-    return next(createError(404, "No user with this user_id exists"));
+    return next(createError(404, "No user with this user_id exists."));
   }
 
   res.status(200).json({
@@ -51,14 +51,14 @@ const create = async (req, res, next) => {
   const idToken = req.headers.authorization;
 
   if (!idToken) {
-    return next(createError(401, "Unauthorized"));
+    return next(createError(401, "Unauthorized."));
   }
 
   let ticket;
   try {
     ticket = await google.verify(idToken);
   } catch (err) {
-    return next(createError(403, "Forbidden"));
+    return next(createError(403, "Forbidden."));
   }
 
   const sub = google.getUserSub(ticket);
@@ -81,13 +81,8 @@ const create = async (req, res, next) => {
   res.status(200).json({ id: user.id });
 };
 
+// TODO only allow this in development
 const destroy = async (req, res, next) => {
-  let boardgames;
-
-  // TODO check if user exists and get boardgames
-
-  // TODO destroy board games for this user
-
   let dbRes;
   try {
     dbRes = await usersModel.destroy(req.params.id);
@@ -96,7 +91,7 @@ const destroy = async (req, res, next) => {
   }
 
   if (dbRes.indexUpdates === 0) {
-    return next(createError(404, "No user with this user_id exists"));
+    return next(createError(404, "No user with this user_id exists."));
   }
 
   res.status(204).end();

@@ -1,9 +1,8 @@
 const express = require("express");
 const boardgamesController = require("../controllers/boardgamesController");
-const { isAuth } = require("../middlewares/authMiddleware");
+const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
   setBoardgameFromReqParam,
-  isUserInDB,
   areAllReqKeysValid,
   isReqBodyValid,
   isUsersBoardgame,

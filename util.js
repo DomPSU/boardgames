@@ -2,7 +2,7 @@ const isNumber = require("is-number");
 
 // returns false if sentKeys does not contain every requiredKeys. true otherwise
 const matchingKeys = (sentKeys, requiredKeys) => {
-  let validKey = true;
+  let validKeys = true;
 
   if (sentKeys.length !== requiredKeys.length) {
     return false;
@@ -10,11 +10,23 @@ const matchingKeys = (sentKeys, requiredKeys) => {
 
   requiredKeys.forEach((requiredkey) => {
     if (sentKeys.indexOf(requiredkey) === -1) {
-      validKey = false;
+      validKeys = false;
     }
   });
 
-  return validKey;
+  return validKeys;
+};
+
+const noExtraKeys = (sentKeys, validKeys) => {
+  let validPartialKeys = true;
+
+  sentKeys.forEach((sentKey) => {
+    if (validKeys.indexOf(sentKey) === -1) {
+      validPartialKeys = false;
+    }
+  });
+
+  return validPartialKeys;
 };
 
 const validInt = (int) => {
@@ -30,6 +42,24 @@ const validInt = (int) => {
 
   // cannot be a string or a float
   if (int !== parseInt(int, 10)) {
+    return false;
+  }
+
+  return true;
+};
+
+const validString = (string) => {
+  // cannot be null, undefined, NaN, empty string, 0 or false
+  if (!string) {
+    return false;
+  }
+
+  if (typeof string !== "string") {
+    return false;
+  }
+
+  if (string.length > 100) {
+    // TODO make 100 a constant
     return false;
   }
 
@@ -59,17 +89,21 @@ const removeCursorFromQueryString = (queryKeys, queryValues) => {
 const PORT = process.env.PORT || 3000;
 const USER = "User";
 const BOARDGAME = "Boardgame";
+const BOARDGAME_KEYS = ["name", "minPlayers", "maxPlayers"];
 const PLAY = "Play";
 const PAGINATION_LIMIT = 5;
 
 module.exports = {
   matchingKeys,
+  noExtraKeys,
   validInt,
+  validString,
   getURL,
   removeCursorFromQueryString,
   PORT,
   USER,
   BOARDGAME,
+  BOARDGAME_KEYS,
   PLAY,
   PAGINATION_LIMIT,
 };

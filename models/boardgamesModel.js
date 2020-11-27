@@ -1,9 +1,12 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
 const {
   BOARDGAME,
+  BOARDGAME_KEYS,
   PAGINATION_LIMIT,
   matchingKeys,
+  noExtraKeys,
   validInt,
+  validString,
 } = require("../util");
 
 const getBoardgameFromID = async (id) => {
@@ -86,20 +89,7 @@ const update = async (values) => {
 };
 
 const validName = (name) => {
-  // cannot be null, undefined, NaN, empty string, 0 or false
-  if (!name) {
-    return false;
-  }
-
-  if (typeof name !== "string") {
-    return false;
-  }
-
-  if (name.length > 100) {
-    return false;
-  }
-
-  return true;
+  return validString(name);
 };
 
 const validMinPlayers = (minPlayer) => {
@@ -135,12 +125,12 @@ const validMinMaxPlayerCombo = (minPlayer, maxPlayer) => {
 };
 
 const validKeys = (sentKeys) => {
-  requiredKeys = ["name", "minPlayers", "maxPlayers"];
-
-  return matchingKeys(sentKeys, requiredKeys);
+  return matchingKeys(sentKeys, BOARDGAME_KEYS);
 };
 
-const uniq = async () => {};
+const validPartialKeys = (sentKeys) => {
+  return noExtraKeys(sentKeys, BOARDGAME_KEYS);
+}
 
 module.exports = {
   getBoardgameFromID,
@@ -153,5 +143,5 @@ module.exports = {
   validMaxPlayers,
   validMinMaxPlayerCombo,
   validKeys,
-  uniq,
+  validPartialKeys,
 };

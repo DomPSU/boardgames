@@ -215,6 +215,19 @@ const updateAll = async (req, res, next) => {
     );
   }
 
+  let priorBoardgame;
+  try {
+    priorBoardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+  } catch (err) {
+    return next(createError(404, "No boardgame with this id exists."));
+  }
+
+  if (res.locals.userID !== priorBoardgame.user.id) {
+    return next(
+      createError(403, "Forbidden. Can only update your own boardgames.")
+    );
+  }
+
   const sentKeys = Object.keys(req.body);
   if (!boardgamesModel.validKeys(sentKeys)) {
     return next(
@@ -262,22 +275,10 @@ const updateAll = async (req, res, next) => {
     return next(err);
   }
 
+  // TODO fix incase someone enters in same boardgame but currently updating
   if (dbRes.boardgames.length !== 0) {
     return next(
       createError(400, "User and boardgame name combination must be unique.")
-    );
-  }
-
-  let priorBoardgame;
-  try {
-    priorBoardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
-  } catch (err) {
-    return next(createError(404, "No boardgame with this id exists."));
-  }
-
-  if (res.locals.userID !== priorBoardgame.user.id) {
-    return next(
-      createError(403, "Forbidden. Can only update your own boardgames.")
     );
   }
 
@@ -322,7 +323,54 @@ const updatePartial = async (req, res, next) => {
     );
   }
 
+  let priorBoardgame;
+  try {
+    priorBoardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+  } catch (err) {
+    return next(createError(404, "No boardgame with this id exists."));
+  }
+
+  if (res.locals.userID !== priorBoardgame.user.id) {
+    return next(
+      createError(403, "Forbidden. Can only update your own boardgames.")
+    );
+  }
+
+  const sentKeys = Object.keys(req.body);
+  if (!boardgamesModel.validPartialKeys(sentKeys)) {
+    return next(
+      createError(
+        400,
+        "Only name, min players and max players keys are allowed."
+      )
+    );
+  }
+
+  let updateValues = {
+    id: priorBoardgame.id,
+    plays: priorBoardgame.plays,
+    user: {
+      id: priorBoardgame.user.id,
+    },
+  };
+
+  updateValues.name = req.body.name ? req.body.name : priorBoardgame.name;
+  updateValues.min_player = req.body.minPlayers
+    ? req.body.minPlayers
+    : priorBoardgame.min_players;
+  updateValues.max_player = req.body.maxPlayers
+    ? req.body.maxPlayers
+    : priorBoardgame.max_players;
+
+  
+  return;
+  let updatedBoardgame;
+
   // TODO careful with unique user + boardgame update
+
+  // complete partial update
+
+  // send update
 };
 
 module.exports = {

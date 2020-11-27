@@ -52,7 +52,7 @@ boardgamesRouter.put(
   isUsersBoardgame,
   areAllReqKeysValid,
   isReqBodyValid,
-  boardgamesService.updateAll
+  boardgamesService.update
 );
 
 // patch
@@ -65,7 +65,7 @@ boardgamesRouter.patch(
   arePartialReqKeysValid,
   setMissingReqBodyValues,
   isReqBodyValid,
-  boardgamesService.updatePartial
+  boardgamesService.update
 );
 
 module.exports = boardgamesRouter;

@@ -93,7 +93,7 @@ const destroy = async (req, res, next) => {
   res.status(204).end();
 };
 
-const updateAll = async (req, res, next) => {
+const update = async (req, res, next) => {
   const priorBoardgame = res.locals.boardgame;
 
   let updateValues = {
@@ -130,21 +130,10 @@ const updateAll = async (req, res, next) => {
   });
 };
 
-const updatePartial = async (req, res, next) => {
-  return;
-
-  // TODO careful with unique user + boardgame update
-
-  // complete partial update
-
-  // send update
-};
-
 module.exports = {
   show,
   index,
   create,
   destroy,
-  updateAll,
-  updatePartial,
+  update,
 };

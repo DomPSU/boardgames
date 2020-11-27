@@ -1,6 +1,5 @@
 const boardgamesModel = require("../models/boardgamesModel");
 const usersModel = require("../models/usersModel");
-const { getURL, removeCursorFromQueryString } = require("../util");
 const createError = require("http-errors");
 
 const setBoardgameFromReqParam = async (req, res, next) => {

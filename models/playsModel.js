@@ -49,10 +49,7 @@ const create = async (values, userID) => {
     date_started: dateStarted,
     num_of_players: numOfPlayers,
     winner: winner,
-    boardgame: {
-      id: null,
-      name: null,
-    },
+    boardgame: null,
     user: {
       id: userID,
     },

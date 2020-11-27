@@ -76,8 +76,8 @@ const update = async (values) => {
   // TODO
 };
 
-const validWinner = (winner) => {
-  return validString(winner);
+const validDateStarted = () => {
+  // TODO
 };
 
 const validNumOfPlayers = (numOfPlayers) => {
@@ -92,6 +92,10 @@ const validNumOfPlayers = (numOfPlayers) => {
   return true;
 };
 
+const validWinner = (winner) => {
+  return validString(winner);
+};
+
 const validKeys = (sentKeys) => {
   return matchingKeys(sentKeys, PLAY_KEYS);
 };
@@ -100,17 +104,13 @@ const validPartialKeys = (sentKeys) => {
   return noExtraKeys(sentKeys, PLAY_KEYS);
 };
 
-const validDate = () => {
-  // TODO
-};
-
 module.exports = {
   getPlayFromID,
   getPlays,
   create,
   destroy,
   update,
-  validDate,
+  validDateStarted,
   validNumOfPlayers,
   validWinner,
   validKeys,

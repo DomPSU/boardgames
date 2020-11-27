@@ -24,7 +24,42 @@ const show = async (req, res, next) => {
   });
 };
 
-const index = async (req, res, next) => {};
+const index = async (req, res, next) => {
+  let queryKeys = Object.keys(req.query);
+  let queryValues = Object.values(req.query);
+
+  queryKeys.push("user.id");
+  queryValues.push(res.locals.user.id);
+
+  const cursor = queryKeys.includes("cursor") ? req.query.cursor : null;
+  removeCursorFromQueryString(queryKeys, queryValues);
+
+  let dbRes;
+  try {
+    dbRes = await playsModel.getPlays(cursor, queryKeys, queryValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  const { isMoreResults, endCursor } = dbRes;
+  let { plays } = dbRes;
+
+  plays.forEach((play) => {
+    play.self = `${getURL()}plays/${play.id}`;
+    play.user.self = `${getURL()}users/${play.user.id}`;
+
+    if (play.boardgame !== null) {
+      play.boardgame.self = `${getURL()}boardgames/${play.boardgame.id}`;
+    }
+  });
+
+  if (isMoreResults === true) {
+    let nextURL = `${getURL()}plays/?cursor=${endCursor}`;
+    res.status(200).json({ plays: plays, next: nextURL });
+  } else {
+    res.status(200).json({ plays: plays });
+  }
+};
 
 const create = async (req, res, next) => {
   let play;

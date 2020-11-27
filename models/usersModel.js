@@ -56,10 +56,46 @@ const destroy = async (id) => {
   return dbRes[0];
 };
 
+const update = async (values) => {
+  const { id, sub, boardgames } = values;
+
+  const updateUser = {
+    id: id,
+    sub: sub,
+    boardgames: boardgames,
+  };
+
+  key = datastore.key([USER, parseInt(id, 10)]);
+  await datastore.save({ key: key, data: updateUser });
+
+  let entity = await datastore.get(key);
+  user = entity.map(addID)[0];
+
+  return user;
+};
+
+const addBoardgame = async (id, boardgame) => {
+  const user = await getUserFromID(id);
+  const { sub } = user;
+  let { boardgames } = user;
+  boardgames.push(boardgame);
+
+  const updateUser = {
+    id: id,
+    sub: sub,
+    boardgames: boardgames,
+  };
+
+  const updatedUser = await update(updateUser);
+  return updatedUser;
+};
+
 module.exports = {
   getUserFromID,
   getUserFromSub,
   getUsers,
   create,
   destroy,
+  update,
+  addBoardgame,
 };

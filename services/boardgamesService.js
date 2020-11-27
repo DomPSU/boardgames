@@ -5,7 +5,7 @@ const createError = require("http-errors");
 
 const show = async (req, res, next) => {
   const { id, name, min_players, max_players, plays } = res.locals.boardgame;
-  
+
   res.status(200).json({
     id: id,
     name: name,
@@ -57,6 +57,15 @@ const create = async (req, res, next) => {
   let boardgame;
   try {
     boardgame = await boardgamesModel.create(req.body, res.locals.user.id);
+  } catch (err) {
+    next(err);
+  }
+
+  try {
+    await usersModel.addBoardgame(res.locals.user.id, {
+      name: boardgame.name,
+      id: boardgame.id,
+    });
   } catch (err) {
     next(err);
   }

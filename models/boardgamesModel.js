@@ -66,9 +66,7 @@ const destroy = async (id) => {
 };
 
 const update = async (values) => {
-  const { name, min_players, max_players, plays, id } = values;
-
-  key = datastore.key([BOARDGAME, parseInt(id, 10)]);
+  const { id, name, min_players, max_players, plays } = values;
 
   const updateBoardgame = {
     name: name,
@@ -80,6 +78,7 @@ const update = async (values) => {
     },
   };
 
+  key = datastore.key([BOARDGAME, parseInt(id, 10)]);
   await datastore.save({ key: key, data: updateBoardgame });
 
   let entity = await datastore.get(key);
@@ -130,7 +129,7 @@ const validKeys = (sentKeys) => {
 
 const validPartialKeys = (sentKeys) => {
   return noExtraKeys(sentKeys, BOARDGAME_KEYS);
-}
+};
 
 module.exports = {
   getBoardgameFromID,

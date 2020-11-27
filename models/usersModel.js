@@ -1,5 +1,5 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
-const { PAGINATION_LIMIT, USER } = require("../util");
+const { PAGINATION_LIMIT, USER, getIndexFromObjArray } = require("../util");
 
 const getUserFromID = async (id) => {
   const key = datastore.key([USER, parseInt(id, 10)]);
@@ -95,13 +95,7 @@ const deleteBoardgame = async (userID, boardgameID) => {
   const { sub, id } = user;
   let { boardgames } = user;
 
-  // TODO make a util
-  const boardgameIndex = boardgames
-    .map(function (boardgame) {
-      return boardgame.id;
-    })
-    .indexOf(boardgameID);
-
+  const boardgameIndex = getIndexFromObjArray(boardgames, boardgameID);
   boardgames.splice(boardgameIndex, 1);
 
   const updateUser = {
@@ -119,13 +113,7 @@ const updateBoardgame = async (userID, boardgameObj) => {
   const { sub, id } = user;
   let { boardgames } = user;
 
-  // TODO make a util
-  const boardgameIndex = boardgames
-    .map(function (boardgame) {
-      return boardgame.id;
-    })
-    .indexOf(boardgameObj.id);
-
+  const boardgameIndex = getIndexFromObjArray(boardgames, boardgameObj.id);
   boardgames.splice(boardgameIndex, 1, boardgameObj);
 
   const updateUser = {

@@ -1,6 +1,15 @@
 const isNumber = require("is-number");
 
-// returns false if sentKeys does not contain every requiredKeys. true otherwise
+const getIndexFromObjArray = (array, itemID) => {
+  index = array
+    .map(function (item) {
+      return item.id;
+    })
+    .indexOf(itemID)
+  
+  return index;
+}
+
 const matchingKeys = (sentKeys, requiredKeys) => {
   let validKeys = true;
 
@@ -94,6 +103,7 @@ const PLAY = "Play";
 const PAGINATION_LIMIT = 5;
 
 module.exports = {
+  getIndexFromObjArray,
   matchingKeys,
   noExtraKeys,
   validInt,

@@ -5,9 +5,6 @@ const usersRouter = require("./usersRouter");
 const boardgamesRouter = require("./boardgamesRouter");
 const playsRouter = require("./playsRouter");
 
-const middleware = require("../middlewares/auth");
-const usersService = require("../services/usersService");
-
 router.get("/", function (req, res) {
   res.status(200);
   res.render("home");

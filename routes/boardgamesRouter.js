@@ -1,6 +1,5 @@
 const express = require("express");
 const boardgamesService = require("../services/boardgamesService");
-const boardgamesRouter = express.Router();
 const { isAuth } = require("../middlewares/auth");
 const {
   setBoardgameFromReqParam,
@@ -12,22 +11,22 @@ const {
   setMissingReqBodyValues,
 } = require("../middlewares/boardgames");
 
+const boardgamesRouter = express.Router();
+boardgamesRouter.use(isAuth, isUserInDB);
+
 // get
 boardgamesRouter.get(
   "/:id",
-  isAuth,
-  isUserInDB,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   boardgamesService.show
 );
-boardgamesRouter.get("/", isAuth, boardgamesService.index);
+
+boardgamesRouter.get("/", boardgamesService.index);
 
 // post
 boardgamesRouter.post(
   "/",
-  isAuth,
-  isUserInDB,
   areAllReqKeysValid,
   isReqBodyValid,
   boardgamesService.create
@@ -36,8 +35,6 @@ boardgamesRouter.post(
 // delete
 boardgamesRouter.delete(
   "/:id",
-  isAuth,
-  isUserInDB,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   boardgamesService.destroy
@@ -46,8 +43,6 @@ boardgamesRouter.delete(
 // put
 boardgamesRouter.put(
   "/:id",
-  isAuth,
-  isUserInDB,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   areAllReqKeysValid,
@@ -58,8 +53,6 @@ boardgamesRouter.put(
 // patch
 boardgamesRouter.patch(
   "/:id",
-  isAuth,
-  isUserInDB,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   arePartialReqKeysValid,

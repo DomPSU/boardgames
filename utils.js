@@ -1,14 +1,15 @@
 const isNumber = require("is-number");
+const { STRING_LIMIT } = require("constants");
 
 const getIndexFromObjArray = (array, itemID) => {
   index = array
     .map(function (item) {
       return item.id;
     })
-    .indexOf(itemID)
-  
+    .indexOf(itemID);
+
   return index;
-}
+};
 
 const matchingKeys = (sentKeys, requiredKeys) => {
   let validKeys = true;
@@ -67,8 +68,7 @@ const validString = (string) => {
     return false;
   }
 
-  if (string.length > 100) {
-    // TODO make 100 a constant
+  if (string.length > STRING_LIMIT) {
     return false;
   }
 
@@ -94,14 +94,6 @@ const removeCursorFromQueryString = (queryKeys, queryValues) => {
   }
   return;
 };
-
-const PORT = process.env.PORT || 3000;
-const USER = "User";
-const BOARDGAME = "Boardgame";
-const BOARDGAME_KEYS = ["name", "minPlayers", "maxPlayers"];
-const PLAY = "Play";
-const PAGINATION_LIMIT = 5;
-
 module.exports = {
   getIndexFromObjArray,
   matchingKeys,
@@ -110,10 +102,4 @@ module.exports = {
   validString,
   getURL,
   removeCursorFromQueryString,
-  PORT,
-  USER,
-  BOARDGAME,
-  BOARDGAME_KEYS,
-  PLAY,
-  PAGINATION_LIMIT,
 };

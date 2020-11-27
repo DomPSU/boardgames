@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const router = require("./routes");
-const util = require("./util");
+const { PORT } = require("./constants");
+const { getURL } = require("./utils");
 const handlebars = require("express-handlebars").create({
   defaultLayout: "main",
 });
@@ -36,6 +37,6 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.listen(util.PORT, () => {
-  console.log(`Server listening on ${util.getURL()}...`);
+app.listen(PORT, () => {
+  console.log(`Server listening on ${getURL()}...`);
 });

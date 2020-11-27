@@ -1,6 +1,6 @@
 const usersModel = require("../models/usersModel");
 const google = require("../config/google");
-const { getURL, removeCursorFromQueryString } = require("../util");
+const { getURL, removeCursorFromQueryString } = require("../utils");
 const createError = require("http-errors");
 
 const show = async (req, res, next) => {

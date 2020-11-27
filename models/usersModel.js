@@ -1,5 +1,6 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
-const { PAGINATION_LIMIT, USER, getIndexFromObjArray } = require("../util");
+const { PAGINATION_LIMIT, USER } = require("../constants")
+const { getIndexFromObjArray } = require("../utils");
 
 const getUserFromID = async (id) => {
   const key = datastore.key([USER, parseInt(id, 10)]);

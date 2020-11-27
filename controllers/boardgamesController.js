@@ -1,7 +1,6 @@
 const boardgamesModel = require("../models/boardgamesModel");
 const usersModel = require("../models/usersModel");
-const { getURL, removeCursorFromQueryString } = require("../util");
-const createError = require("http-errors");
+const { getURL, removeCursorFromQueryString } = require("../utils");
 
 const show = async (req, res, next) => {
   const { id, name, min_players, max_players, plays } = res.locals.boardgame;

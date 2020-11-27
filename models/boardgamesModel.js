@@ -1,13 +1,11 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
+const { BOARDGAME, BOARDGAME_KEYS, PAGINATION_LIMIT } = require("../constants");
 const {
-  BOARDGAME,
-  BOARDGAME_KEYS,
-  PAGINATION_LIMIT,
   matchingKeys,
   noExtraKeys,
   validInt,
   validString,
-} = require("../util");
+} = require("../utils");
 
 const getBoardgameFromID = async (id) => {
   const key = datastore.key([BOARDGAME, parseInt(id, 10)]);

@@ -1,5 +1,4 @@
 const playsModel = require("../models/playsModel");
-const usersModel = require("../models/usersModel");
 const createError = require("http-errors");
 
 const setPlayFromReqParam = async (req, res, next) => {
@@ -17,22 +16,6 @@ const isUsersPlay = async (req, res, next) => {
   if (res.locals.user.id !== res.locals.play.user.id) {
     return next(
       createError(403, "Forbidden. Play is owned by a different user.")
-    );
-  }
-
-  next();
-};
-
-const isUserInDB = async (req, res, next) => {
-  try {
-    user = await usersModel.getUserFromID(res.locals.user.id);
-  } catch (err) {
-    next(err);
-  }
-
-  if (user === undefined) {
-    return next(
-      createError(500, "Valid credentials but user is not stored in database.")
     );
   }
 
@@ -91,7 +74,6 @@ const setMissingReqBodyValues = async (req, res, next) => {
 module.exports = {
   setPlayFromReqParam,
   isUsersPlay,
-  isUserInDB,
   areAllReqKeysValid,
   arePartialReqKeysValid,
   isReqBodyValid,

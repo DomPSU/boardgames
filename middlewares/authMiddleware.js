@@ -24,14 +24,31 @@ const isAuth = async (req, res, next) => {
   try {
     const user = await userModel.getUserFromSub(sub);
     res.locals.user = {
-      id: user.id
-    }
+      id: user.id,
+    };
     next();
   } catch (err) {
     return next(err);
   }
 };
 
+const isUserInDB = async (req, res, next) => {
+  try {
+    user = await usersModel.getUserFromID(res.locals.user.id);
+  } catch (err) {
+    next(err);
+  }
+
+  if (user === undefined) {
+    return next(
+      createError(500, "Valid credentials but user is not stored in database.")
+    );
+  }
+
+  next();
+};
+
 module.exports = {
   isAuth,
+  isUserInDB,
 };

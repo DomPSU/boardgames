@@ -1,5 +1,4 @@
 const boardgamesModel = require("../models/boardgamesModel");
-const usersModel = require("../models/usersModel");
 const createError = require("http-errors");
 
 const setBoardgameFromReqParam = async (req, res, next) => {
@@ -17,22 +16,6 @@ const isUsersBoardgame = async (req, res, next) => {
   if (res.locals.user.id !== res.locals.boardgame.user.id) {
     return next(
       createError(403, "Forbidden. Boardgame is owned by a different user.")
-    );
-  }
-
-  next();
-};
-
-const isUserInDB = async (req, res, next) => {
-  try {
-    user = await usersModel.getUserFromID(res.locals.user.id);
-  } catch (err) {
-    next(err);
-  }
-
-  if (user === undefined) {
-    return next(
-      createError(500, "Valid credentials but user is not stored in database.")
     );
   }
 
@@ -134,7 +117,6 @@ const setMissingReqBodyValues = async (req, res, next) => {
 module.exports = {
   setBoardgameFromReqParam,
   isUsersBoardgame,
-  isUserInDB,
   areAllReqKeysValid,
   arePartialReqKeysValid,
   isReqBodyValid,

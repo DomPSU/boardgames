@@ -74,11 +74,11 @@ const update = async (values) => {
   return user;
 };
 
-const addBoardgame = async (id, boardgame) => {
-  const user = await getUserFromID(id);
-  const { sub } = user;
+const addBoardgame = async (userID, boardgameObj) => {
+  const user = await getUserFromID(userID);
+  const { sub, id } = user;
   let { boardgames } = user;
-  boardgames.push(boardgame);
+  boardgames.push(boardgameObj);
 
   const updateUser = {
     id: id,
@@ -90,12 +90,39 @@ const addBoardgame = async (id, boardgame) => {
   return updatedUser;
 };
 
+const deleteBoardgame = async (userID, boardgameID) => {
+  const user = await getUserFromID(userID);
+  const { sub, id } = user;
+  let { boardgames } = user;
+
+  // TODO make a util
+  const boardgameIndex = boardgames
+    .map(function (boardgame) {
+      return boardgame.id;
+    })
+    .indexOf(boardgameID);
+  boardgames.splice(boardgameIndex, 1);
+
+  const updateUser = {
+    id: id,
+    sub: sub,
+    boardgames: boardgames,
+  };
+
+  const updatedUser = await update(updateUser);
+  return updatedUser;
+};
+
+// TODO
+const updateBoardgame = async (id, boardgameName) => {};
+
 module.exports = {
   getUserFromID,
   getUserFromSub,
   getUsers,
   create,
   destroy,
-  update,
   addBoardgame,
+  deleteBoardgame,
+  updateBoardgame,
 };

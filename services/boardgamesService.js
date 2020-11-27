@@ -87,8 +87,6 @@ const create = async (req, res, next) => {
 };
 
 const destroy = async (req, res, next) => {
-  // update user by remove boardgame from user boardgames
-
   // check if board game has plays
 
   // delete all plays
@@ -97,6 +95,12 @@ const destroy = async (req, res, next) => {
     await boardgamesModel.destroy(res.locals.boardgame.id);
   } catch (err) {
     return next(err);
+  }
+
+  try {
+    await usersModel.deleteBoardgame(res.locals.user.id, boardgame.id);
+  } catch (err) {
+    next(err);
   }
 
   res.status(204).end();
@@ -122,6 +126,8 @@ const update = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+
+  // TODO update boardgames for this user
 
   const { id, name, min_players, max_players, plays } = updatedBoardgame;
 

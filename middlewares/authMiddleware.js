@@ -1,6 +1,6 @@
 const google = require("../config/google");
 const createError = require("http-errors");
-const userModel = require("../models/usersModel");
+const usersModel = require("../models/usersModel");
 
 const isAuth = async (req, res, next) => {
   let idToken = req.headers.authorization;
@@ -22,7 +22,7 @@ const isAuth = async (req, res, next) => {
   }
 
   try {
-    const user = await userModel.getUserFromSub(sub);
+    const user = await usersModel.getUserFromSub(sub);
     res.locals.user = {
       id: user.id,
     };
@@ -33,6 +33,7 @@ const isAuth = async (req, res, next) => {
 };
 
 const isUserInDB = async (req, res, next) => {
+  let user;
   try {
     user = await usersModel.getUserFromID(res.locals.user.id);
   } catch (err) {

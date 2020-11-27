@@ -1,6 +1,6 @@
 const express = require("express");
 const boardgamesController = require("../controllers/boardgamesController");
-const { isAuth } = require("../middlewares/auth");
+const { isAuth } = require("../middlewares/authMiddleware");
 const {
   setBoardgameFromReqParam,
   isUserInDB,
@@ -9,7 +9,7 @@ const {
   isUsersBoardgame,
   arePartialReqKeysValid,
   setMissingReqBodyValues,
-} = require("../middlewares/boardgames");
+} = require("../middlewares/boardgamesMiddleware");
 
 const boardgamesRouter = express.Router();
 boardgamesRouter.use(isAuth, isUserInDB);

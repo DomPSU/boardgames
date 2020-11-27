@@ -4,7 +4,7 @@ const createError = require("http-errors");
 
 const setBoardgameFromReqParam = async (req, res, next) => {
   try {
-    boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+    const boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
     res.locals.boardgame = boardgame;
   } catch (err) {
     return next(createError(404, "No boardgame with this id exists."));
@@ -45,7 +45,7 @@ const areAllReqKeysValid = async (req, res, next) => {
     return next(
       createError(
         400,
-        "The keys name, min players and max players are required. No extra keys are allowed."
+        "The keys name, minPlayers and maxPlayers are required. No extra keys are allowed."
       )
     );
   }

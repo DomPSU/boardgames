@@ -1,5 +1,11 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
-const { PLAY, PLAY_KEYS, PAGINATION_LIMIT } = require("../constants");
+const {
+  PLAY,
+  PLAY_KEYS,
+  PAGINATION_LIMIT,
+  MIN_PLAYERS,
+  MAX_PLAYERS,
+} = require("../constants");
 const {
   matchingKeys,
   noExtraKeys,
@@ -67,7 +73,7 @@ const destroy = async (id) => {
 };
 
 const update = async (values) => {
-// TODO
+  // TODO
 };
 
 const validWinner = (winner) => {
@@ -79,8 +85,7 @@ const validNumOfPlayers = (numOfPlayers) => {
     return false;
   }
 
-  if (numOfPlayers < 1 || numOfPlayers > 1000) {
-    // TODO make max constant
+  if (numOfPlayers < MIN_PLAYERS || numOfPlayers > MAX_PLAYERS) {
     return false;
   }
 
@@ -96,8 +101,8 @@ const validPartialKeys = (sentKeys) => {
 };
 
 const validDate = () => {
-// TODO
-}
+  // TODO
+};
 
 module.exports = {
   getPlayFromID,

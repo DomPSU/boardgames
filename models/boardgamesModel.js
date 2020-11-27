@@ -1,5 +1,11 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
-const { BOARDGAME, BOARDGAME_KEYS, PAGINATION_LIMIT } = require("../constants");
+const {
+  BOARDGAME,
+  BOARDGAME_KEYS,
+  PAGINATION_LIMIT,
+  MIN_PLAYERS,
+  MAX_PLAYERS,
+} = require("../constants");
 const {
   matchingKeys,
   noExtraKeys,
@@ -94,7 +100,7 @@ const validMinPlayers = (minPlayer) => {
     return false;
   }
 
-  if (minPlayer < 1) {
+  if (minPlayer < MIN_PLAYERS) {
     return false;
   }
 
@@ -106,7 +112,7 @@ const validMaxPlayers = (maxPlayer) => {
     return false;
   }
 
-  if (maxPlayer > 1000) {
+  if (maxPlayer > MAX_PLAYERS) {
     return false;
   }
 

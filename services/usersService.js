@@ -37,6 +37,11 @@ const index = async (req, res, next) => {
 
   users.forEach((user) => {
     user.self = `${getURL()}users/${user.id}`;
+
+    user.boardgames.forEach((boardgame) => {
+      boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
+    })
+
   });
 
   if (isMoreResults === true) {

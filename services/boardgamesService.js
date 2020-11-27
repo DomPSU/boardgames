@@ -31,7 +31,10 @@ const show = async (req, res, next) => {
     min_players: min_players,
     max_players: max_players,
     plays: plays,
-    user: boardgame.user,
+    user: {
+      id: boardgame.user.id,
+      self: `${getURL()}users/${boardgame.user.id}`,
+    },
     self: `${getURL()}boardgames/${id}`,
   });
 };
@@ -205,9 +208,128 @@ const destroy = async (req, res, next) => {
   res.status(204).end();
 };
 
+const updateAll = async (req, res, next) => {
+  if (res.locals.userID === undefined) {
+    return next(
+      createError(401, "Unauthorized. Authorization middleware is required.")
+    );
+  }
+
+  const sentKeys = Object.keys(req.body);
+  if (!boardgamesModel.validKeys(sentKeys)) {
+    return next(
+      createError(
+        400,
+        "The keys name, min players and max players are required. No extra keys are allowed."
+      )
+    );
+  }
+
+  let errorSummary = "";
+  if (!boardgamesModel.validName(req.body.name)) {
+    errorSummary += "Invalid name. ";
+  }
+
+  if (!boardgamesModel.validMinPlayers(req.body.minPlayers)) {
+    errorSummary += "Invalid min players. ";
+  }
+
+  if (!boardgamesModel.validMaxPlayers(req.body.maxPlayers)) {
+    errorSummary += "Invalid max players. ";
+  }
+
+  if (errorSummary !== "") {
+    return next(createError(400, errorSummary.slice(0, -2)));
+  }
+
+  if (
+    !boardgamesModel.validMinMaxPlayerCombo(
+      req.body.minPlayers,
+      req.body.maxPlayers
+    )
+  ) {
+    return next(createError(400, "Min players must be less than max players."));
+  }
+
+  queryKeys = ["user.id", "name"];
+  queryValues = [res.locals.userID, req.body.name];
+  const cursor = null;
+
+  let dbRes;
+  try {
+    dbRes = await boardgamesModel.getBoardgames(cursor, queryKeys, queryValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  if (dbRes.boardgames.length !== 0) {
+    return next(
+      createError(400, "User and boardgame name combination must be unique.")
+    );
+  }
+
+  let priorBoardgame;
+  try {
+    priorBoardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+  } catch (err) {
+    return next(createError(404, "No boardgame with this id exists."));
+  }
+
+  if (res.locals.userID !== priorBoardgame.user.id) {
+    return next(
+      createError(403, "Forbidden. Can only update your own boardgames.")
+    );
+  }
+
+  let updatedBoardgame;
+  let updateValues = {
+    id: priorBoardgame.id,
+    name: req.body.name,
+    min_players: req.body.minPlayers,
+    max_players: req.body.maxPlayers,
+    plays: priorBoardgame.plays,
+    user: {
+      id: priorBoardgame.user.id,
+    },
+  };
+
+  try {
+    updatedBoardgame = await boardgamesModel.update(updateValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  const { id, name, min_players, max_players, plays } = updatedBoardgame;
+
+  res.status(200).json({
+    id: id,
+    name: name,
+    min_players: min_players,
+    max_players: max_players,
+    plays: plays,
+    user: {
+      id: updatedBoardgame.user.id,
+      self: `${getURL()}users/${updatedBoardgame.user.id}`,
+    },
+    self: `${getURL()}boardgames/${id}`,
+  });
+};
+
+const updatePartial = async (req, res, next) => {
+  if (res.locals.userID === undefined) {
+    return next(
+      createError(401, "Unauthorized. Authorization middleware is required.")
+    );
+  }
+
+  // TODO careful with unique user + boardgame update
+};
+
 module.exports = {
   show,
   index,
   create,
   destroy,
+  updateAll,
+  updatePartial,
 };

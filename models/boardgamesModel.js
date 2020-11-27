@@ -33,8 +33,8 @@ const getBoardgames = async (cursor, queryKeys, queryValues) => {
   return { boardgames: entities[0].map(addID), isMoreResults, endCursor };
 };
 
-const create = async (reqBody, userID) => {
-  const { name, minPlayers, maxPlayers } = reqBody;
+const create = async (values, userID) => {
+  const { name, minPlayers, maxPlayers } = values;
 
   let key = datastore.key(BOARDGAME);
 
@@ -60,6 +60,29 @@ const destroy = async (id) => {
   const key = datastore.key([BOARDGAME, parseInt(id, 10)]);
 
   return datastore.delete(key);
+};
+
+const update = async (values) => {
+  const { name, min_players, max_players, plays, id } = values;
+
+  key = datastore.key([BOARDGAME, parseInt(id, 10)]);
+
+  const updateBoardgame = {
+    name: name,
+    min_players: min_players,
+    max_players: max_players,
+    plays: plays,
+    user: {
+      id: values.user.id,
+    },
+  };
+
+  await datastore.save({ key: key, data: updateBoardgame });
+
+  let entity = await datastore.get(key);
+  boardgame = entity.map(addID)[0];
+
+  return boardgame;
 };
 
 const validName = (name) => {
@@ -124,6 +147,7 @@ module.exports = {
   getBoardgames,
   create,
   destroy,
+  update,
   validName,
   validMinPlayers,
   validMaxPlayers,

@@ -101,6 +101,7 @@ const deleteBoardgame = async (userID, boardgameID) => {
       return boardgame.id;
     })
     .indexOf(boardgameID);
+
   boardgames.splice(boardgameIndex, 1);
 
   const updateUser = {
@@ -113,8 +114,29 @@ const deleteBoardgame = async (userID, boardgameID) => {
   return updatedUser;
 };
 
-// TODO
-const updateBoardgame = async (id, boardgameName) => {};
+const updateBoardgame = async (userID, boardgameObj) => {
+  const user = await getUserFromID(userID);
+  const { sub, id } = user;
+  let { boardgames } = user;
+
+  // TODO make a util
+  const boardgameIndex = boardgames
+    .map(function (boardgame) {
+      return boardgame.id;
+    })
+    .indexOf(boardgameObj.id);
+
+  boardgames.splice(boardgameIndex, 1, boardgameObj);
+
+  const updateUser = {
+    id: id,
+    sub: sub,
+    boardgames: boardgames,
+  };
+
+  const updatedUser = await update(updateUser);
+  return updatedUser;
+};
 
 module.exports = {
   getUserFromID,

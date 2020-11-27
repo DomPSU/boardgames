@@ -127,7 +127,16 @@ const update = async (req, res, next) => {
     return next(err);
   }
 
-  // TODO update boardgames for this user
+  try {
+    await usersModel.updateBoardgame(res.locals.user.id, {
+      name: boardgame.name,
+      id: boardgame.id,
+    });
+  } catch (err) {
+    next(err);
+  }
+
+  // TODO update plays
 
   const { id, name, min_players, max_players, plays } = updatedBoardgame;
 

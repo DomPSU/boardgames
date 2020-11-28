@@ -119,6 +119,23 @@ const validPartialKeys = (sentKeys) => {
   return noExtraKeys(sentKeys, PLAY_KEYS);
 };
 
+const deleteBoardgame = async (playID) => {
+  const play = await getPlayFromID(playID);
+  const { id, date_started, num_of_players, winner, user } = play;
+
+  const updatePlay = {
+    id: id,
+    date_started: date_started,
+    num_of_players: num_of_players,
+    winner: winner,
+    user: user,
+    boardgame: null,
+  };
+
+  const updatedPlay = await update(updatePlay);
+  return updatedPlay;
+};
+
 module.exports = {
   getPlayFromID,
   getPlays,
@@ -130,4 +147,5 @@ module.exports = {
   validWinner,
   validKeys,
   validPartialKeys,
+  deleteBoardgame,
 };

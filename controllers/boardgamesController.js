@@ -1,17 +1,17 @@
 const boardgamesModel = require("../models/boardgamesModel");
 const usersModel = require("../models/usersModel");
+const playsModel = require("../models/playsModel");
 const { getURL, removeCursorFromQueryString } = require("../utils");
 
 const show = async (req, res, next) => {
-  const { id, name, min_players, max_players} = res.locals.boardgame;
-  let { plays }  = res.locals.boardgame
+  const { id, name, min_players, max_players } = res.locals.boardgame;
+  let { plays } = res.locals.boardgame;
 
   if (plays !== null) {
     plays.forEach((play) => {
       play.self = `${getURL()}plays/${play.id}`;
-    });;
+    });
   }
-  
 
   res.status(200).json({
     id: id,
@@ -50,6 +50,10 @@ const index = async (req, res, next) => {
   boardgames.forEach((boardgame) => {
     boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
     boardgame.user.self = `${getURL()}users/${boardgame.user.id}`;
+
+    boardgame.plays.forEach((play) => {
+      play.self = `${getURL()}plays/${play.id}`;
+    });
   });
 
   if (isMoreResults === true) {
@@ -74,7 +78,7 @@ const create = async (req, res, next) => {
       id: boardgame.id,
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 
   const { id, name, min_players, max_players, plays } = boardgame;
@@ -94,20 +98,29 @@ const create = async (req, res, next) => {
 };
 
 const destroy = async (req, res, next) => {
-  // check if board game has plays
-
-  // delete all plays
+  if (res.locals.boardgame.plays.length !== 0) {
+    res.locals.boardgame.plays.forEach(async (play) => {
+      try {
+        await playsModel.deleteBoardgame(play.id);
+      } catch (err) {
+        return next(err);
+      }
+    });
+  }
 
   try {
-    await boardgamesModel.destroy(res.locals.boardgame.id);
+    await usersModel.deleteBoardgame(
+      res.locals.user.id,
+      res.locals.boardgame.id
+    );
   } catch (err) {
     return next(err);
   }
 
   try {
-    await usersModel.deleteBoardgame(res.locals.user.id, boardgame.id);
+    await boardgamesModel.destroy(res.locals.boardgame.id);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 
   res.status(204).end();
@@ -141,14 +154,23 @@ const update = async (req, res, next) => {
         id: updatedBoardgame.id,
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
-  // TODO update plays. Note need to add middleware validation to ensure
-  // updated min and max player does not conflict with Plays.num_of_players
+  // TODO add middleware to ensure number of player conflict does not exist
 
-  const { id, name, min_players, max_players, plays } = updatedBoardgame;
+  // TODO add boardgame.name to plays.boardgame if boardgame name updated,
+  // update all plays
+
+  const { id, name, min_players, max_players } = updatedBoardgame;
+  let { plays } = updatedBoardgame;
+
+  if (plays) {
+    plays.forEach((play) => {
+      play.self = `${getURL()}plays/${play.id}`;
+    });
+  }
 
   res.status(200).json({
     id: id,

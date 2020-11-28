@@ -52,7 +52,7 @@ playsRouter.delete(
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
-  // TODO check relation exists
+  // TODO check at least one play exisits that has same id as passed
   playsController.removeBoardgame
 );
 
@@ -84,8 +84,9 @@ playsRouter.patch(
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
+  // TODO check no relation exists or the existing boardgame is the same
   setMissingReqBodyValues,
-  isPlayBoardgameValid, // TODO validate play number compatibility
+  isPlayBoardgameValid,
   playsController.update
 );
 

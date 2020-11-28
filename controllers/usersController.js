@@ -11,9 +11,13 @@ const show = async (req, res, next) => {
     return next(createError(404, "No user with this user_id exists."));
   }
 
+  user.boardgames.forEach((boardgame) => {
+    boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
+  });
+
   res.status(200).json({
     id: user.id,
-    sub: user.sub,
+    boardgames: user.boardgames,
     self: `${getURL()}users/${user.id}`,
   });
 };
@@ -36,12 +40,12 @@ const index = async (req, res, next) => {
   let { users } = dbRes;
 
   users.forEach((user) => {
+    delete user.sub;
     user.self = `${getURL()}users/${user.id}`;
 
     user.boardgames.forEach((boardgame) => {
       boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
     })
-
   });
 
   if (isMoreResults === true) {

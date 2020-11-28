@@ -10,7 +10,7 @@ const show = async (req, res, next) => {
     boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
   }
 
-  res.status(201).json({
+  res.status(200).json({
     id: id,
     date_started: date_started,
     num_of_players: num_of_players,
@@ -157,7 +157,7 @@ const update = async (req, res, next) => {
       id: updatedPlay.user.id,
       self: `${getURL()}users/${updatedPlay.user.id}`,
     },
-    self: `${getURL()}boardgames/${id}`,
+    self: `${getURL()}plays/${id}`,
   });
 };
 
@@ -200,7 +200,7 @@ const removeBoardgame = async (req, res, next) => {
       id: updatedPlay.user.id,
       self: `${getURL()}users/${updatedPlay.user.id}`,
     },
-    self: `${getURL()}boardgames/${id}`,
+    self: `${getURL()}plays/${id}`,
   });
 
 }

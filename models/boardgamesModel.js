@@ -11,6 +11,7 @@ const {
   noExtraKeys,
   validInt,
   validString,
+  getIndexFromObjArray,
 } = require("../utils");
 
 const getBoardgameFromID = async (id) => {
@@ -135,6 +136,27 @@ const validPartialKeys = (sentKeys) => {
   return noExtraKeys(sentKeys, BOARDGAME_KEYS);
 };
 
+const addPlay = async (boardgameID, playObj) => {
+  const boardgame = await getBoardgameFromID(boardgameID);
+  const { id, name, min_players, max_players, user } = boardgame;
+  let { plays } = boardgame;
+  plays.push(playObj);
+
+  const updateBoardgame = {
+    id: id,
+    name: name,
+    min_players: min_players,
+    max_players: max_players,
+    user: user,
+    plays: plays,
+  };
+
+  const updatedBoardgame = await update(updateBoardgame);
+  return updatedBoardgame;
+};
+
+const deletePlay = async () => {};
+
 module.exports = {
   getBoardgameFromID,
   getBoardgames,
@@ -147,4 +169,6 @@ module.exports = {
   validMinMaxPlayerCombo,
   validKeys,
   validPartialKeys,
+  addPlay,
+  deletePlay,
 };

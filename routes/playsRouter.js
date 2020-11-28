@@ -1,7 +1,6 @@
 const express = require("express");
 const playsController = require("../controllers/playsController");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
-
 const {
   setPlayFromReqParam,
   areAllReqKeysValid,
@@ -9,13 +8,23 @@ const {
   isUsersPlay,
   arePartialReqKeysValid,
   setMissingReqBodyValues,
+  isPlayBoardgameValid,
 } = require("../middlewares/playsMiddleware");
+const {
+  setBoardgameFromReqParam,
+  isUsersBoardgame,
+} = require("../middlewares/boardgamesMiddleware");
 
 const playsRouter = express.Router();
 playsRouter.use(isAuth, isUserInDB);
 
 // get
-playsRouter.get("/:playID", setPlayFromReqParam, isUsersPlay, playsController.show);
+playsRouter.get(
+  "/:playID",
+  setPlayFromReqParam,
+  isUsersPlay,
+  playsController.show
+);
 
 playsRouter.get("/", playsController.index);
 
@@ -53,6 +62,18 @@ playsRouter.patch(
   arePartialReqKeysValid,
   setMissingReqBodyValues,
   isReqBodyValid,
+  playsController.update
+);
+
+playsRouter.patch(
+  "/:playID/boardgames/:boardgameID",
+  setPlayFromReqParam,
+  isUsersPlay,
+  setBoardgameFromReqParam,
+  isUsersBoardgame,
+  setMissingReqBodyValues,
+  // disallow req body values?
+  isPlayBoardgameValid,
   playsController.update
 );
 

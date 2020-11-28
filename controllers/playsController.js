@@ -1,5 +1,5 @@
 const playsModel = require("../models/playsModel");
-const usersModel = require("../models/usersModel");
+const boardgamesModel = require("../models/boardgamesModel");
 const { getURL, removeCursorFromQueryString } = require("../utils");
 
 const show = async (req, res, next) => {
@@ -101,13 +101,16 @@ const destroy = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   const priorPlay = res.locals.play;
+  const boardgame = res.locals.boardgame
+    ? { id: res.locals.boardgame.id }
+    : priorPlay.boardgame;
 
   let updateValues = {
     id: priorPlay.id,
     date_started: req.body.dateStarted,
     num_of_players: req.body.numOfPlayers,
     winner: req.body.winner,
-    boardgame: priorPlay.boardgame,
+    boardgame: boardgame,
     user: {
       id: priorPlay.user.id,
     },
@@ -120,11 +123,21 @@ const update = async (req, res, next) => {
     return next(err);
   }
 
-  const { id, date_started, num_of_players, winner } = updatedPlay;
-  let boardgame = updatedPlay.boardgame;
+  if (res.locals.boardgame) {
+    try {
+      await boardgamesModel.addPlay(res.locals.boardgame.id, {
+        id: updatedPlay.id,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 
-  if (boardgame !== null) {
-    boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
+  const { id, date_started, num_of_players, winner } = updatedPlay;
+  let updatedBoardgame = updatedPlay.boardgame;
+
+  if (updatedBoardgame !== null) {
+    updatedBoardgame.self = `${getURL()}boardgames/${updatedBoardgame.id}`;
   }
 
   res.status(200).json({
@@ -133,7 +146,7 @@ const update = async (req, res, next) => {
     num_of_players,
     num_of_players,
     winner: winner,
-    boardgame: boardgame,
+    boardgame: updatedBoardgame,
     user: {
       id: updatedPlay.user.id,
       self: `${getURL()}users/${updatedPlay.user.id}`,

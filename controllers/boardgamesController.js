@@ -3,7 +3,15 @@ const usersModel = require("../models/usersModel");
 const { getURL, removeCursorFromQueryString } = require("../utils");
 
 const show = async (req, res, next) => {
-  const { id, name, min_players, max_players, plays } = res.locals.boardgame;
+  const { id, name, min_players, max_players} = res.locals.boardgame;
+  let { plays }  = res.locals.boardgame
+
+  if (plays !== null) {
+    plays.forEach((play) => {
+      play.self = `${getURL()}plays/${play.id}`;
+    });;
+  }
+  
 
   res.status(200).json({
     id: id,
@@ -126,14 +134,15 @@ const update = async (req, res, next) => {
     return next(err);
   }
 
-  // TODO only need to call this if req.body.name is different from priorBoardgame
-  try {
-    await usersModel.updateBoardgame(res.locals.user.id, {
-      name: boardgame.name,
-      id: boardgame.id,
-    });
-  } catch (err) {
-    next(err);
+  if (priorBoardgame.name !== updatedBoardgame.name) {
+    try {
+      await usersModel.updateBoardgame(res.locals.user.id, {
+        name: updatedBoardgame.name,
+        id: updatedBoardgame.id,
+      });
+    } catch (err) {
+      next(err);
+    }
   }
 
   // TODO update plays. Note need to add middleware validation to ensure

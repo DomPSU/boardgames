@@ -60,16 +60,21 @@ const setMissingReqBodyValues = async (req, res, next) => {
 
   req.body.dateStarted = req.body.dateStarted
     ? req.body.dateStarted
-    : priorPlay.dateStarted;
+    : priorPlay.date_started;
 
   req.body.numOfPlayers = req.body.numOfPlayers
     ? req.body.numOfPlayers
-    : priorPlay.numOfPlayers;
+    : priorPlay.num_of_players;
 
   req.body.winner = req.body.winner ? req.body.winner : priorPlay.winner;
 
   next();
 };
+
+const isPlayBoardgameValid = async (req, res, next) => {
+  // TODO
+  next();
+}
 
 module.exports = {
   setPlayFromReqParam,
@@ -78,4 +83,5 @@ module.exports = {
   arePartialReqKeysValid,
   isReqBodyValid,
   setMissingReqBodyValues,
+  isPlayBoardgameValid,
 };

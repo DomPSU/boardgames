@@ -66,7 +66,7 @@ const create = async (req, res, next) => {
   try {
     play = await playsModel.create(req.body, res.locals.user.id);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 
   const { id, date_started, num_of_players, winner } = play;
@@ -93,7 +93,7 @@ const destroy = async (req, res, next) => {
         res.locals.play.id
       );
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -136,7 +136,7 @@ const update = async (req, res, next) => {
         id: updatedPlay.id,
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -150,8 +150,7 @@ const update = async (req, res, next) => {
   res.status(200).json({
     id: id,
     date_started: date_started,
-    num_of_players,
-    num_of_players,
+    num_of_players: num_of_players,
     winner: winner,
     boardgame: updatedBoardgame,
     user: {
@@ -162,10 +161,55 @@ const update = async (req, res, next) => {
   });
 };
 
+const removeBoardgame = async (req, res, next) => {
+  const priorPlay = res.locals.play;
+  
+ let updateValues = {
+    id: priorPlay.id,
+    date_started: priorPlay.date_started,
+    num_of_players: priorPlay.num_of_players,
+    winner: priorPlay.winner,
+    boardgame: null,
+    user: {
+      id: priorPlay.user.id,
+    },
+  };
+
+  let updatedPlay;
+  try {
+    updatedPlay = await playsModel.update(updateValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  try {
+    await boardgamesModel.deletePlay(res.locals.boardgame.id, updatedPlay.id)
+  } catch (err) {
+    return next(err);
+  }
+
+  const { id, date_started, num_of_players, winner, boardgame } = updatedPlay;
+
+  res.status(200).json({
+    id: id,
+    date_started: date_started,
+    num_of_players: num_of_players,
+    winner: winner,
+    boardgame: boardgame,
+    user: {
+      id: updatedPlay.user.id,
+      self: `${getURL()}users/${updatedPlay.user.id}`,
+    },
+    self: `${getURL()}boardgames/${id}`,
+  });
+
+}
+
 module.exports = {
   show,
   index,
   create,
   destroy,
   update,
+  removeBoardgame,
 };

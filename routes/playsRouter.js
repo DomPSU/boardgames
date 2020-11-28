@@ -44,6 +44,17 @@ playsRouter.delete(
   playsController.destroy
 );
 
+playsRouter.delete(
+  "/:playID/boardgames/:boardgameID",
+  setPlayFromReqParam,
+  isUsersPlay,
+  setBoardgameFromReqParam,
+  isUsersBoardgame,
+  // TODO check relation exists
+  // TODO disallow req body values
+  playsController.removeBoardgame
+);
+
 // put
 playsRouter.put(
   "/:playID",
@@ -71,9 +82,9 @@ playsRouter.patch(
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
+  // TODO disallow req body values
   setMissingReqBodyValues,
-  // disallow req body values?
-  isPlayBoardgameValid,
+  isPlayBoardgameValid, // TODO validate play number compatibility
   playsController.update
 );
 

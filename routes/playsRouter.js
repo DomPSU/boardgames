@@ -1,5 +1,6 @@
 const express = require("express");
 const playsController = require("../controllers/playsController");
+const { isReqBodyEmpty } = require("../middlewares/generalMiddleware");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
   setPlayFromReqParam,
@@ -46,12 +47,12 @@ playsRouter.delete(
 
 playsRouter.delete(
   "/:playID/boardgames/:boardgameID",
+  isReqBodyEmpty,
   setPlayFromReqParam,
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   // TODO check relation exists
-  // TODO disallow req body values
   playsController.removeBoardgame
 );
 
@@ -78,11 +79,11 @@ playsRouter.patch(
 
 playsRouter.patch(
   "/:playID/boardgames/:boardgameID",
+  isReqBodyEmpty,
   setPlayFromReqParam,
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
-  // TODO disallow req body values
   setMissingReqBodyValues,
   isPlayBoardgameValid, // TODO validate play number compatibility
   playsController.update

@@ -70,7 +70,7 @@ const destroy = async (id) => {
 };
 
 const update = async (values) => {
-  const { id, name, min_players, max_players, plays } = values;
+  const { id, name, min_players, max_players, plays, user } = values;
 
   const updateBoardgame = {
     name: name,
@@ -78,7 +78,7 @@ const update = async (values) => {
     max_players: max_players,
     plays: plays,
     user: {
-      id: values.user.id,
+      id: user.id,
     },
   };
 
@@ -86,7 +86,7 @@ const update = async (values) => {
   await datastore.save({ key: key, data: updateBoardgame });
 
   let entity = await datastore.get(key);
-  boardgame = entity.map(addID)[0];
+  const boardgame = entity.map(addID)[0];
 
   return boardgame;
 };

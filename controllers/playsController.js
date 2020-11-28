@@ -86,21 +86,61 @@ const create = async (req, res, next) => {
 };
 
 const destroy = async (req, res, next) => {
-  // check if play has boardgame 
+  // check if play has boardgame
 
-  // delete play from boardgame 
+  // delete play from boardgame
 
   try {
     await playsModel.destroy(res.locals.play.id);
   } catch (err) {
     return next(err);
   }
-  
+
   res.status(204).end();
 };
 
+const update = async (req, res, next) => {
+  const priorPlay = res.locals.play;
 
-const update = async (req, res, next) => {};
+  let updateValues = {
+    id: priorPlay.id,
+    date_started: req.body.dateStarted,
+    num_of_players: req.body.numOfPlayers,
+    winner: req.body.winner,
+    boardgame: priorPlay.boardgame,
+    user: {
+      id: priorPlay.user.id,
+    },
+  };
+
+  let updatedPlay;
+  try {
+    updatedPlay = await playsModel.update(updateValues);
+  } catch (err) {
+    return next(err);
+  }
+
+  const { id, date_started, num_of_players, winner } = updatedPlay;
+  let boardgame = updatedPlay.boardgame;
+
+  if (boardgame !== null) {
+    boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
+  }
+
+  res.status(200).json({
+    id: id,
+    date_started: date_started,
+    num_of_players,
+    num_of_players,
+    winner: winner,
+    boardgame: boardgame,
+    user: {
+      id: updatedPlay.user.id,
+      self: `${getURL()}users/${updatedPlay.user.id}`,
+    },
+    self: `${getURL()}boardgames/${id}`,
+  });
+};
 
 module.exports = {
   show,

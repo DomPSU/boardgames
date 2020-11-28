@@ -70,7 +70,25 @@ const destroy = async (id) => {
 };
 
 const update = async (values) => {
-  // TODO
+  const { id, date_started, num_of_players, winner, boardgame, user } = values;
+
+  const updatePlay = {
+    date_started: date_started,
+    num_of_players: num_of_players,
+    winner: winner,
+    boardgame: boardgame,
+    user: {
+      id: user.id,
+    },
+  };
+
+  key = datastore.key([PLAY, parseInt(id, 10)]);
+  await datastore.save({ key: key, data: updatePlay });
+
+  let entity = await datastore.get(key);
+  const play = entity.map(addID)[0];
+
+  return play;
 };
 
 const validDateStarted = () => {

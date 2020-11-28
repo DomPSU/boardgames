@@ -155,7 +155,26 @@ const addPlay = async (boardgameID, playObj) => {
   return updatedBoardgame;
 };
 
-const deletePlay = async () => {};
+const deletePlay = async (boardgameID, playID) => {
+  const boardgame = await getBoardgameFromID(boardgameID);
+  const { id, name, min_players, max_players, user } = boardgame;
+  let { plays } = boardgame;
+
+  const playIndex = getIndexFromObjArray(plays, playID);
+  plays.splice(playIndex, 1);
+
+  const updateBoardgame = {
+    id: id,
+    name: name,
+    min_players: min_players,
+    max_players: max_players,
+    user: user,
+    plays: plays,
+  };
+
+  const updatedBoardgame = await update(updateBoardgame);
+  return updatedBoardgame;
+};
 
 module.exports = {
   getBoardgameFromID,

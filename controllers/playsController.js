@@ -86,9 +86,16 @@ const create = async (req, res, next) => {
 };
 
 const destroy = async (req, res, next) => {
-  // check if play has boardgame
-
-  // delete play from boardgame
+  if (res.locals.play.boardgame) {
+    try {
+      await boardgamesModel.deletePlay(
+        res.locals.play.boardgame.id,
+        res.locals.play.id
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
 
   try {
     await playsModel.destroy(res.locals.play.id);

@@ -126,6 +126,7 @@ const update = async (req, res, next) => {
     return next(err);
   }
 
+  // TODO only need to call this if req.body.name is different from priorBoardgame
   try {
     await usersModel.updateBoardgame(res.locals.user.id, {
       name: boardgame.name,
@@ -135,7 +136,8 @@ const update = async (req, res, next) => {
     next(err);
   }
 
-  // TODO update plays
+  // TODO update plays. Note need to add middleware validation to ensure
+  // updated min and max player does not conflict with Plays.num_of_players
 
   const { id, name, min_players, max_players, plays } = updatedBoardgame;
 

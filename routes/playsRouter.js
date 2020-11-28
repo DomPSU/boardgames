@@ -15,7 +15,7 @@ const playsRouter = express.Router();
 playsRouter.use(isAuth, isUserInDB);
 
 // get
-playsRouter.get("/:id", setPlayFromReqParam, isUsersPlay, playsController.show);
+playsRouter.get("/:playID", setPlayFromReqParam, isUsersPlay, playsController.show);
 
 playsRouter.get("/", playsController.index);
 
@@ -29,7 +29,7 @@ playsRouter.post(
 
 // delete
 playsRouter.delete(
-  "/:id",
+  "/:playID",
   setPlayFromReqParam,
   isUsersPlay,
   playsController.destroy
@@ -37,7 +37,7 @@ playsRouter.delete(
 
 // put
 playsRouter.put(
-  "/:id",
+  "/:playID",
   setPlayFromReqParam,
   isUsersPlay,
   areAllReqKeysValid,
@@ -47,7 +47,7 @@ playsRouter.put(
 
 // patch
 playsRouter.patch(
-  "/:id",
+  "/:playID",
   setPlayFromReqParam,
   isUsersPlay,
   arePartialReqKeysValid,

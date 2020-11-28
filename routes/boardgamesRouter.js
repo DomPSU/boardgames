@@ -15,7 +15,7 @@ boardgamesRouter.use(isAuth, isUserInDB);
 
 // get
 boardgamesRouter.get(
-  "/:id",
+  "/:boardgameID",
   setBoardgameFromReqParam,
   isUsersBoardgame,
   boardgamesController.show
@@ -33,7 +33,7 @@ boardgamesRouter.post(
 
 // delete
 boardgamesRouter.delete(
-  "/:id",
+  "/:boardgameID",
   setBoardgameFromReqParam,
   isUsersBoardgame,
   boardgamesController.destroy
@@ -41,7 +41,7 @@ boardgamesRouter.delete(
 
 // put
 boardgamesRouter.put(
-  "/:id",
+  "/:boardgameID",
   setBoardgameFromReqParam,
   isUsersBoardgame,
   areAllReqKeysValid,
@@ -51,7 +51,7 @@ boardgamesRouter.put(
 
 // patch
 boardgamesRouter.patch(
-  "/:id",
+  "/:boardgameID",
   setBoardgameFromReqParam,
   isUsersBoardgame,
   arePartialReqKeysValid,

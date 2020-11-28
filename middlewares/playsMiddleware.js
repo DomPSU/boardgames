@@ -3,7 +3,7 @@ const createError = require("http-errors");
 
 const setPlayFromReqParam = async (req, res, next) => {
   try {
-    const play = await playsModel.getPlayFromID(req.params.id);
+    const play = await playsModel.getPlayFromID(req.params.playID);
     res.locals.play = play;
   } catch (err) {
     return next(createError(404, "No play with this id exists."));

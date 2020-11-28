@@ -3,7 +3,9 @@ const createError = require("http-errors");
 
 const setBoardgameFromReqParam = async (req, res, next) => {
   try {
-    const boardgame = await boardgamesModel.getBoardgameFromID(req.params.id);
+    const boardgame = await boardgamesModel.getBoardgameFromID(
+      req.params.boardgameID
+    );
     res.locals.boardgame = boardgame;
   } catch (err) {
     return next(createError(404, "No boardgame with this id exists."));

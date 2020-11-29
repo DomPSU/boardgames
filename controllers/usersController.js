@@ -36,7 +36,7 @@ const index = async (req, res, next) => {
     return next(err);
   }
 
-  const { isMoreResults, endCursor } = dbRes;
+  const { isMoreResults, endCursor, numOfUsers } = dbRes;
   let { users } = dbRes;
 
   users.forEach((user) => {
@@ -45,14 +45,16 @@ const index = async (req, res, next) => {
 
     user.boardgames.forEach((boardgame) => {
       boardgame.self = `${getURL()}boardgames/${boardgame.id}`;
-    })
+    });
   });
 
   if (isMoreResults === true) {
     let nextURL = `${getURL()}users/?cursor=${endCursor}`;
-    res.status(200).json({ users: users, next: nextURL });
+    res
+      .status(200)
+      .json({ users: users, next: nextURL, number_of_users: numOfUsers });
   } else {
-    res.status(200).json({ users: users });
+    res.status(200).json({ users: users, number_of_users: numOfUsers });
   }
 };
 

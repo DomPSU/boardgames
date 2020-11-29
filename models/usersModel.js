@@ -1,5 +1,5 @@
 const { datastore, addID, isMoreResultsFn } = require("./db");
-const { PAGINATION_LIMIT, USER } = require("../constants")
+const { PAGINATION_LIMIT, USER } = require("../constants");
 const { getIndexFromObjArray } = require("../utils");
 
 const getUserFromID = async (id) => {
@@ -22,9 +22,11 @@ const getUserFromSub = async (sub) => {
 };
 
 const getUsers = async (cursor, queryKeys, queryValues) => {
+  let allUsersQuery = datastore.createQuery(USER);
   let q = datastore.createQuery(USER).limit(PAGINATION_LIMIT);
 
   for (let i = 0; i < queryKeys.length; i += 1) {
+    allUsersQuery.filter(queryKeys[i], "=", queryValues[i]);
     q.filter(queryKeys[i], "=", queryValues[i]);
   }
 
@@ -32,11 +34,20 @@ const getUsers = async (cursor, queryKeys, queryValues) => {
     q = q.start(cursor);
   }
 
+  const allUsersEntities = await datastore.runQuery(allUsersQuery);
+  const numOfUsers = allUsersEntities[0].length;
+
   const entities = await datastore.runQuery(q);
+
   const { moreResults, endCursor } = entities[1];
   const isMoreResults = isMoreResultsFn(moreResults);
 
-  return { users: entities[0].map(addID), isMoreResults, endCursor };
+  return {
+    users: entities[0].map(addID),
+    isMoreResults,
+    endCursor,
+    numOfUsers,
+  };
 };
 
 const create = async (sub) => {

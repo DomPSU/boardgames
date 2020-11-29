@@ -24,9 +24,11 @@ const getBoardgameFromID = async (id) => {
 };
 
 const getBoardgames = async (cursor, queryKeys, queryValues) => {
+  let allBoardgamesQuery = datastore.createQuery(BOARDGAME);
   let q = datastore.createQuery(BOARDGAME).limit(PAGINATION_LIMIT);
 
   for (let i = 0; i < queryKeys.length; i += 1) {
+    allBoardgamesQuery.filter(queryKeys[i], "=", queryValues[i]);
     q.filter(queryKeys[i], "=", queryValues[i]);
   }
 
@@ -34,11 +36,20 @@ const getBoardgames = async (cursor, queryKeys, queryValues) => {
     q = q.start(cursor);
   }
 
+  const allBoardgamesEntities = await datastore.runQuery(allBoardgamesQuery);
+  const numOfBoardgames = allBoardgamesEntities[0].length;
+
   const entities = await datastore.runQuery(q);
+
   const { moreResults, endCursor } = entities[1];
   const isMoreResults = isMoreResultsFn(moreResults);
 
-  return { boardgames: entities[0].map(addID), isMoreResults, endCursor };
+  return {
+    boardgames: entities[0].map(addID),
+    isMoreResults,
+    endCursor,
+    numOfBoardgames,
+  };
 };
 
 const create = async (values, userID) => {

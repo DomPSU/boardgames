@@ -44,7 +44,7 @@ const index = async (req, res, next) => {
     return next(err);
   }
 
-  const { isMoreResults, endCursor } = dbRes;
+  const { isMoreResults, endCursor, numOfBoardgames } = dbRes;
   let { boardgames } = dbRes;
 
   boardgames.forEach((boardgame) => {
@@ -58,9 +58,15 @@ const index = async (req, res, next) => {
 
   if (isMoreResults === true) {
     let nextURL = `${getURL()}boardgames/?cursor=${endCursor}`;
-    res.status(200).json({ boardgames: boardgames, next: nextURL });
+    res.status(200).json({
+      boardgames: boardgames,
+      next: nextURL,
+      number_of_boardgames: numOfBoardgames,
+    });
   } else {
-    res.status(200).json({ boardgames: boardgames });
+    res
+      .status(200)
+      .json({ boardgames: boardgames, number_of_boardgames: numOfBoardgames });
   }
 };
 

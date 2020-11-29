@@ -10,6 +10,8 @@ const {
   arePartialReqKeysValid,
   setMissingReqBodyValues,
   isPlayBoardgameValid,
+  isPlayBoardgameNull,
+  isPlayAndBoardgameRelated,
 } = require("../middlewares/playsMiddleware");
 const {
   setBoardgameFromReqParam,
@@ -52,7 +54,7 @@ playsRouter.delete(
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
-  // TODO check at least one play exisits that has same id as passed
+  isPlayAndBoardgameRelated,
   playsController.removeBoardgame
 );
 
@@ -84,7 +86,7 @@ playsRouter.patch(
   isUsersPlay,
   setBoardgameFromReqParam,
   isUsersBoardgame,
-  // TODO check no relation exists or the existing boardgame is the same
+  isPlayBoardgameNull,
   setMissingReqBodyValues,
   isPlayBoardgameValid,
   playsController.update

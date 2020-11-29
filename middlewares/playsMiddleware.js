@@ -74,7 +74,26 @@ const setMissingReqBodyValues = async (req, res, next) => {
 const isPlayBoardgameValid = async (req, res, next) => {
   // TODO
   next();
-}
+};
+
+const isPlayBoardgameNull = async (req, res, next) => {
+  if (res.locals.play.boardgame) {
+    return next(createError(400, "Play is already related to a boardgame."));
+  }
+
+  next();
+};
+
+const isPlayAndBoardgameRelated = async (req, res, next) => {
+  if (
+    !res.locals.play.boardgame ||
+    res.locals.play.boardgame.id !== res.locals.boardgame.id
+  ) {
+    return next(createError(400, "Play and boardgame are not related."));
+  }
+
+  next();
+};
 
 module.exports = {
   setPlayFromReqParam,
@@ -84,4 +103,6 @@ module.exports = {
   isReqBodyValid,
   setMissingReqBodyValues,
   isPlayBoardgameValid,
+  isPlayBoardgameNull,
+  isPlayAndBoardgameRelated,
 };

@@ -10,6 +10,11 @@ const isReqBodyEmpty = async (req, res, next) => {
   next();
 };
 
+const methodNotAllowed = async (req, res, next) => {
+  return next(createError(405, "Method not allowed."));
+};
+
 module.exports = {
   isReqBodyEmpty,
+  methodNotAllowed,
 };

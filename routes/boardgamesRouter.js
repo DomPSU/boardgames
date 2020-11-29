@@ -1,5 +1,6 @@
 const express = require("express");
 const boardgamesController = require("../controllers/boardgamesController");
+const { methodNotAllowed } = require("../middlewares/generalMiddleware");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
   setBoardgameFromReqParam,
@@ -24,6 +25,8 @@ boardgamesRouter.get(
 boardgamesRouter.get("/", boardgamesController.index);
 
 // post
+boardgamesRouter.post("/:boardgameID", methodNotAllowed);
+
 boardgamesRouter.post(
   "/",
   areAllReqKeysValid,
@@ -39,6 +42,8 @@ boardgamesRouter.delete(
   boardgamesController.destroy
 );
 
+boardgamesRouter.delete("/", methodNotAllowed);
+
 // put
 boardgamesRouter.put(
   "/:boardgameID",
@@ -48,6 +53,8 @@ boardgamesRouter.put(
   isReqBodyValid,
   boardgamesController.update
 );
+
+boardgamesRouter.put("/", methodNotAllowed);
 
 // patch
 boardgamesRouter.patch(
@@ -59,5 +66,7 @@ boardgamesRouter.patch(
   isReqBodyValid,
   boardgamesController.update
 );
+
+boardgamesRouter.patch("/", methodNotAllowed);
 
 module.exports = boardgamesRouter;

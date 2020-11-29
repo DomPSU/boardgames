@@ -1,6 +1,9 @@
 const express = require("express");
 const playsController = require("../controllers/playsController");
-const { isReqBodyEmpty } = require("../middlewares/generalMiddleware");
+const {
+  isReqBodyEmpty,
+  methodNotAllowed,
+} = require("../middlewares/generalMiddleware");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
   setPlayFromReqParam,
@@ -32,6 +35,8 @@ playsRouter.get(
 playsRouter.get("/", playsController.index);
 
 // post
+playsRouter.post("/:playID", methodNotAllowed);
+
 playsRouter.post(
   "/",
   areAllReqKeysValid,
@@ -40,13 +45,6 @@ playsRouter.post(
 );
 
 // delete
-playsRouter.delete(
-  "/:playID",
-  setPlayFromReqParam,
-  isUsersPlay,
-  playsController.destroy
-);
-
 playsRouter.delete(
   "/:playID/boardgames/:boardgameID",
   isReqBodyEmpty,
@@ -58,6 +56,17 @@ playsRouter.delete(
   playsController.removeBoardgame
 );
 
+playsRouter.delete("/:playID/boardgames", methodNotAllowed);
+
+playsRouter.delete(
+  "/:playID",
+  setPlayFromReqParam,
+  isUsersPlay,
+  playsController.destroy
+);
+
+playsRouter.delete("/", methodNotAllowed);
+
 // put
 playsRouter.put(
   "/:playID",
@@ -68,17 +77,9 @@ playsRouter.put(
   playsController.update
 );
 
-// patch
-playsRouter.patch(
-  "/:playID",
-  setPlayFromReqParam,
-  isUsersPlay,
-  arePartialReqKeysValid,
-  setMissingReqBodyValues,
-  isReqBodyValid,
-  playsController.update
-);
+playsRouter.put("/", methodNotAllowed);
 
+// patch
 playsRouter.patch(
   "/:playID/boardgames/:boardgameID",
   isReqBodyEmpty,
@@ -91,5 +92,19 @@ playsRouter.patch(
   isPlayBoardgameValid,
   playsController.update
 );
+
+playsRouter.patch("/:playID/boardgames", methodNotAllowed);
+
+playsRouter.patch(
+  "/:playID",
+  setPlayFromReqParam,
+  isUsersPlay,
+  arePartialReqKeysValid,
+  setMissingReqBodyValues,
+  isReqBodyValid,
+  playsController.update
+);
+
+playsRouter.patch("/", methodNotAllowed);
 
 module.exports = playsRouter;

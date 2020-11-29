@@ -1,6 +1,9 @@
 const express = require("express");
 const boardgamesController = require("../controllers/boardgamesController");
-const { methodNotAllowed } = require("../middlewares/generalMiddleware");
+const {
+  methodNotAllowed,
+  onlyReturnsJSON,
+} = require("../middlewares/generalMiddleware");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
   setBoardgameFromReqParam,
@@ -17,18 +20,20 @@ boardgamesRouter.use(isAuth, isUserInDB);
 // get
 boardgamesRouter.get(
   "/:boardgameID",
+  onlyReturnsJSON,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   boardgamesController.show
 );
 
-boardgamesRouter.get("/", boardgamesController.index);
+boardgamesRouter.get("/", onlyReturnsJSON, boardgamesController.index);
 
 // post
-boardgamesRouter.post("/:boardgameID", methodNotAllowed);
+boardgamesRouter.post("/:boardgameID", onlyReturnsJSON, methodNotAllowed);
 
 boardgamesRouter.post(
   "/",
+  onlyReturnsJSON,
   areAllReqKeysValid,
   isReqBodyValid,
   boardgamesController.create
@@ -42,11 +47,12 @@ boardgamesRouter.delete(
   boardgamesController.destroy
 );
 
-boardgamesRouter.delete("/", methodNotAllowed);
+boardgamesRouter.delete("/", onlyReturnsJSON, methodNotAllowed);
 
 // put
 boardgamesRouter.put(
   "/:boardgameID",
+  onlyReturnsJSON,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   areAllReqKeysValid,
@@ -54,11 +60,12 @@ boardgamesRouter.put(
   boardgamesController.update
 );
 
-boardgamesRouter.put("/", methodNotAllowed);
+boardgamesRouter.put("/", onlyReturnsJSON, methodNotAllowed);
 
 // patch
 boardgamesRouter.patch(
   "/:boardgameID",
+  onlyReturnsJSON,
   setBoardgameFromReqParam,
   isUsersBoardgame,
   arePartialReqKeysValid,
@@ -67,6 +74,6 @@ boardgamesRouter.patch(
   boardgamesController.update
 );
 
-boardgamesRouter.patch("/", methodNotAllowed);
+boardgamesRouter.patch("/", onlyReturnsJSON, methodNotAllowed);
 
 module.exports = boardgamesRouter;

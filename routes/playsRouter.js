@@ -3,6 +3,7 @@ const playsController = require("../controllers/playsController");
 const {
   isReqBodyEmpty,
   methodNotAllowed,
+  onlyReturnsJSON,
 } = require("../middlewares/generalMiddleware");
 const { isAuth, isUserInDB } = require("../middlewares/authMiddleware");
 const {
@@ -27,18 +28,20 @@ playsRouter.use(isAuth, isUserInDB);
 // get
 playsRouter.get(
   "/:playID",
+  onlyReturnsJSON,
   setPlayFromReqParam,
   isUsersPlay,
   playsController.show
 );
 
-playsRouter.get("/", playsController.index);
+playsRouter.get("/", onlyReturnsJSON, playsController.index);
 
 // post
-playsRouter.post("/:playID", methodNotAllowed);
+playsRouter.post("/:playID", onlyReturnsJSON, methodNotAllowed);
 
 playsRouter.post(
   "/",
+  onlyReturnsJSON,
   areAllReqKeysValid,
   isReqBodyValid,
   playsController.create
@@ -47,6 +50,7 @@ playsRouter.post(
 // delete
 playsRouter.delete(
   "/:playID/boardgames/:boardgameID",
+  onlyReturnsJSON,
   isReqBodyEmpty,
   setPlayFromReqParam,
   isUsersPlay,
@@ -56,7 +60,7 @@ playsRouter.delete(
   playsController.removeBoardgame
 );
 
-playsRouter.delete("/:playID/boardgames", methodNotAllowed);
+playsRouter.delete("/:playID/boardgames", onlyReturnsJSON, methodNotAllowed);
 
 playsRouter.delete(
   "/:playID",
@@ -65,11 +69,12 @@ playsRouter.delete(
   playsController.destroy
 );
 
-playsRouter.delete("/", methodNotAllowed);
+playsRouter.delete("/", onlyReturnsJSON, methodNotAllowed);
 
 // put
 playsRouter.put(
   "/:playID",
+  onlyReturnsJSON,
   setPlayFromReqParam,
   isUsersPlay,
   areAllReqKeysValid,
@@ -77,11 +82,12 @@ playsRouter.put(
   playsController.update
 );
 
-playsRouter.put("/", methodNotAllowed);
+playsRouter.put("/", onlyReturnsJSON, methodNotAllowed);
 
 // patch
 playsRouter.patch(
   "/:playID/boardgames/:boardgameID",
+  onlyReturnsJSON,
   isReqBodyEmpty,
   setPlayFromReqParam,
   isUsersPlay,
@@ -93,10 +99,11 @@ playsRouter.patch(
   playsController.update
 );
 
-playsRouter.patch("/:playID/boardgames", methodNotAllowed);
+playsRouter.patch("/:playID/boardgames", onlyReturnsJSON, methodNotAllowed);
 
 playsRouter.patch(
   "/:playID",
+  onlyReturnsJSON,
   setPlayFromReqParam,
   isUsersPlay,
   arePartialReqKeysValid,
@@ -105,6 +112,6 @@ playsRouter.patch(
   playsController.update
 );
 
-playsRouter.patch("/", methodNotAllowed);
+playsRouter.patch("/", onlyReturnsJSON, methodNotAllowed);
 
 module.exports = playsRouter;

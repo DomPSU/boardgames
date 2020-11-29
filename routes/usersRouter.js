@@ -1,7 +1,12 @@
 const express = require("express");
 const usersController = require("../controllers/usersController");
-const { methodNotAllowed } = require("../middlewares/generalMiddleware");
+const {
+  methodNotAllowed,
+  onlyReturnsJSON,
+} = require("../middlewares/generalMiddleware");
 const usersRouter = express.Router();
+
+usersRouter.use(onlyReturnsJSON);
 
 // get
 usersRouter.get("/:id", usersController.show);
@@ -20,7 +25,7 @@ usersRouter.patch("/:id", methodNotAllowed);
 usersRouter.patch("/", methodNotAllowed);
 
 // delete
-usersRouter.delete("/:id", usersController.destroy);
+usersRouter.delete("/:id", methodNotAllowed);
 usersRouter.delete("/", methodNotAllowed);
 
 module.exports = usersRouter;

@@ -90,7 +90,6 @@ const create = async (req, res, next) => {
   res.status(200).json({ id: user.id });
 };
 
-// TODO only allow this in development
 const destroy = async (req, res, next) => {
   let dbRes;
   try {

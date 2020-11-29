@@ -14,7 +14,16 @@ const methodNotAllowed = async (req, res, next) => {
   return next(createError(405, "Method not allowed."));
 };
 
+const onlyReturnsJSON = async (req, res, next) => {
+  if (!req.accepts("json")) {
+    return next(createError(406, "Not Acceptable. JSON is returned."))
+  }
+
+  next();
+}
+
 module.exports = {
   isReqBodyEmpty,
   methodNotAllowed,
+  onlyReturnsJSON,
 };

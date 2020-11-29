@@ -23,9 +23,11 @@ const getPlayFromID = async (id) => {
 };
 
 const getPlays = async (cursor, queryKeys, queryValues) => {
+  let allPlaysQuery = datastore.createQuery(PLAY);
   let q = datastore.createQuery(PLAY).limit(PAGINATION_LIMIT);
 
   for (let i = 0; i < queryKeys.length; i += 1) {
+    allPlaysQuery.filter(queryKeys[i], "=", queryValues[i]);
     q.filter(queryKeys[i], "=", queryValues[i]);
   }
 
@@ -33,11 +35,19 @@ const getPlays = async (cursor, queryKeys, queryValues) => {
     q = q.start(cursor);
   }
 
+  const allPlaysEntities = await datastore.runQuery(allPlaysQuery);
+  const numOfPlays = allPlaysEntities[0].length;
+
   const entities = await datastore.runQuery(q);
   const { moreResults, endCursor } = entities[1];
   const isMoreResults = isMoreResultsFn(moreResults);
 
-  return { plays: entities[0].map(addID), isMoreResults, endCursor };
+  return {
+    plays: entities[0].map(addID),
+    isMoreResults,
+    endCursor,
+    numOfPlays,
+  };
 };
 
 const create = async (values, userID) => {

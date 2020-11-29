@@ -41,7 +41,7 @@ const index = async (req, res, next) => {
     return next(err);
   }
 
-  const { isMoreResults, endCursor } = dbRes;
+  const { isMoreResults, endCursor, numOfPlays } = dbRes;
   let { plays } = dbRes;
 
   plays.forEach((play) => {
@@ -55,9 +55,11 @@ const index = async (req, res, next) => {
 
   if (isMoreResults === true) {
     let nextURL = `${getURL()}plays/?cursor=${endCursor}`;
-    res.status(200).json({ plays: plays, next: nextURL });
+    res
+      .status(200)
+      .json({ plays: plays, next: nextURL, number_of_plays: numOfPlays });
   } else {
-    res.status(200).json({ plays: plays });
+    res.status(200).json({ plays: plays, number_of_plays: numOfPlays });
   }
 };
 
@@ -163,8 +165,8 @@ const update = async (req, res, next) => {
 
 const removeBoardgame = async (req, res, next) => {
   const priorPlay = res.locals.play;
-  
- let updateValues = {
+
+  let updateValues = {
     id: priorPlay.id,
     date_started: priorPlay.date_started,
     num_of_players: priorPlay.num_of_players,
@@ -183,7 +185,7 @@ const removeBoardgame = async (req, res, next) => {
   }
 
   try {
-    await boardgamesModel.deletePlay(res.locals.boardgame.id, updatedPlay.id)
+    await boardgamesModel.deletePlay(res.locals.boardgame.id, updatedPlay.id);
   } catch (err) {
     return next(err);
   }
@@ -202,8 +204,7 @@ const removeBoardgame = async (req, res, next) => {
     },
     self: `${getURL()}plays/${id}`,
   });
-
-}
+};
 
 module.exports = {
   show,

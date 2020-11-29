@@ -12,6 +12,7 @@ const {
   isUsersBoardgame,
   arePartialReqKeysValid,
   setMissingReqBodyValues,
+  isNameAndUserUniq,
 } = require("../middlewares/boardgamesMiddleware");
 
 const boardgamesRouter = express.Router();
@@ -36,6 +37,7 @@ boardgamesRouter.post(
   onlyReturnsJSON,
   areAllReqKeysValid,
   isReqBodyValid,
+  isNameAndUserUniq,
   boardgamesController.create
 );
 
@@ -57,6 +59,7 @@ boardgamesRouter.put(
   isUsersBoardgame,
   areAllReqKeysValid,
   isReqBodyValid,
+  isNameAndUserUniq,
   boardgamesController.update
 );
 
@@ -71,6 +74,7 @@ boardgamesRouter.patch(
   arePartialReqKeysValid,
   setMissingReqBodyValues,
   isReqBodyValid,
+  isNameAndUserUniq,
   boardgamesController.update
 );
 

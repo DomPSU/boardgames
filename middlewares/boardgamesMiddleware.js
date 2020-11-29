@@ -79,6 +79,10 @@ const isReqBodyValid = async (req, res, next) => {
     return next(createError(400, "Min players must be less than max players."));
   }
 
+  next();
+};
+
+const isNameAndUserUniq = async (req, res, next) => {
   queryKeys = ["user.id", "name"];
   queryValues = [res.locals.user.id, req.body.name];
   const cursor = null;
@@ -90,10 +94,22 @@ const isReqBodyValid = async (req, res, next) => {
     return next(err);
   }
 
-  // TODO FIX incase someone enters in same boardgame currently updating
-  if (dbRes.boardgames.length !== 0) {
+  if (dbRes.boardgames.length > 1) {
     return next(
-      createError(400, "User and boardgame name combination must be unique.")
+      createError(500, "Duplicate composite key for user.id + boardgame.name.")
+    );
+  }
+
+  if (req.method === "POST" && dbRes.boardgames.length === 1) {
+    return next(
+      createError(400, "User and boardgame combination already exists.")
+    );
+  } else if (
+    dbRes.boardgames.length === 1 &&
+    dbRes.boardgames[0].id !== res.locals.boardgame.id
+  ) {
+    return next(
+      createError(400, "User and boardgame combination already exists.")
     );
   }
 
@@ -123,4 +139,5 @@ module.exports = {
   arePartialReqKeysValid,
   isReqBodyValid,
   setMissingReqBodyValues,
+  isNameAndUserUniq,
 };

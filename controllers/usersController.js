@@ -6,7 +6,7 @@ const createError = require("http-errors");
 const show = async (req, res, next) => {
   let user;
   try {
-    user = await usersModel.getUserFromID(req.params.id);
+    user = await usersModel.getUserFromID(req.params.userID);
   } catch (err) {
     return next(createError(404, "No user with this user_id exists."));
   }
@@ -95,7 +95,7 @@ const create = async (req, res, next) => {
 const destroy = async (req, res, next) => {
   let dbRes;
   try {
-    dbRes = await usersModel.destroy(req.params.id);
+    dbRes = await usersModel.destroy(req.params.userID);
   } catch (err) {
     return next(err);
   }

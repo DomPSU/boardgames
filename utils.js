@@ -75,7 +75,7 @@ const validString = (string) => {
   return true;
 };
 
-// TODO env var?
+// TODO env var
 const getURL = () => {
   if (process.env.NODE_ENV === "development") {
     return "http://localhost:3000/";

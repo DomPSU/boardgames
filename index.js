@@ -9,7 +9,7 @@ const handlebars = require("express-handlebars").create({
 const createError = require("http-errors");
 
 const app = express();
-app.set("port", process.env.PORT || 3000);
+app.set("port", PORT);
 app.set("view engine", "handlebars");
 app.engine("handlebars", handlebars.engine);
 

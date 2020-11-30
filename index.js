@@ -14,7 +14,6 @@ app.set("view engine", "handlebars");
 app.engine("handlebars", handlebars.engine);
 
 app.use(bodyParser.json());
-
 app.use("/", router);
 
 // catch 404
@@ -30,11 +29,7 @@ app.use((err, req, res, next) => {
 
   console.log(`${err.status} : ${err.message}`);
 
-  if (res.status === "500") {
-    res.render("general", { text: err.status + " " + err.message });
-  } else {
-    res.json({ Error: err.message });
-  }
+  res.json({ Error: err.message }).end();
 });
 
 app.listen(PORT, () => {
